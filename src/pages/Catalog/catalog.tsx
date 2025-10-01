@@ -1,5 +1,5 @@
-import { useState } from 'react'
-import { Search, Grid, List, Filter, ChevronDown, ShoppingCart, ImageIcon, ArrowLeft, Heart, Share2 } from 'lucide-react'
+import { useState, useEffect, useRef } from 'react'
+import { Search, Grid, List, Filter, ShoppingCart, ImageIcon, ArrowLeft, Heart, Share2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Slider } from "@/components/ui/slider"
@@ -125,8 +125,8 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
 
   if (!book) return null
 
-  const images = book.additionalImages && book.additionalImages.length > 0 
-    ? [book.image, ...book.additionalImages] 
+  const images = book.additionalImages && book.additionalImages.length > 0
+    ? [book.image, ...book.additionalImages]
     : [book.image]
 
   const formatPrice = (price: number) => {
@@ -149,7 +149,7 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
             onClick={onClose}
             className="fixed inset-0 bg-background/80 backdrop-blur-xl z-50"
           />
-          
+
           {/* Main Modal */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
@@ -159,7 +159,7 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
             className="fixed inset-4 md:inset-8 lg:inset-12 xl:inset-20 z-50 overflow-hidden"
           >
             <div className="w-full h-full bg-background/95 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-              
+
               {/* Header */}
               <div className="flex items-center justify-between p-6 border-b border-border/30 bg-background/50">
                 <Button
@@ -170,7 +170,7 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
                 >
                   <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
                 </Button>
-                
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -178,14 +178,14 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
                     onClick={() => setIsLiked(!isLiked)}
                     className={cn(
                       "h-10 w-10 rounded-xl transition-all duration-300",
-                      isLiked 
-                        ? "text-red-500 bg-red-500/10 hover:bg-red-500/20" 
+                      isLiked
+                        ? "text-red-500 bg-red-500/10 hover:bg-red-500/20"
                         : "hover:bg-primary/10 hover:text-primary"
                     )}
                   >
                     <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
                   </Button>
-                  
+
                   <Button
                     variant="ghost"
                     size="icon"
@@ -199,7 +199,7 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
               {/* Content */}
               <div className="flex-1 overflow-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
-                  
+
                   {/* Left Column - Images */}
                   <div className="space-y-6">
                     {/* Main Image */}
@@ -248,8 +248,8 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
                               key={i}
                               className={cn(
                                 "text-lg",
-                                i < Math.floor(book.rating!) 
-                                  ? "text-amber-400" 
+                                i < Math.floor(book.rating!)
+                                  ? "text-amber-400"
                                   : "text-muted-foreground/30"
                               )}
                             >
@@ -274,7 +274,7 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
                           <p className="font-medium">{book.pages || "Не указано"}</p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-3 text-sm">
                         <div className="p-2 bg-primary/10 rounded-lg">
                           <span className="text-primary">📅</span>
@@ -319,7 +319,7 @@ const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
                           {book.quantity}
                         </div>
                       </div>
-                      
+
                       <Button
                         onClick={handleAddToCart}
                         size="lg"
@@ -349,6 +349,21 @@ export const Catalog = () => {
   const [showFilters, setShowFilters] = useState(false)
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000])
   const [selectedBook, setSelectedBook] = useState<any>(null)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+
+  // Следим за прокруткой для компактного хедера
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(contentRef.current ? contentRef.current.scrollTop > 50 : false)
+    }
+
+    const contentElement = contentRef.current
+    if (contentElement) {
+      contentElement.addEventListener('scroll', handleScroll)
+      return () => contentElement.removeEventListener('scroll', handleScroll)
+    }
+  }, [])
 
   // Фильтрация книг
   const filteredBooks = mockBooks.filter(book => {
@@ -384,69 +399,51 @@ export const Catalog = () => {
   // Обработчик добавления в корзину
   const handleAddToCart = (book: any) => {
     console.log('Добавлено в корзину:', book.title)
-    // Здесь можно добавить логику добавления в корзину
   }
 
   return (
     <div className="h-full flex flex-col">
-      {/* Заголовок и поиск */}
-      <div className="p-6 pb-4 flex-shrink-0">
-        <motion.h1 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-3xl font-serif font-light mb-6"
-        >
-          Каталог
-        </motion.h1>
+      {/* Компактный хедер */}
+      <motion.div
+        className={cn(
+          "sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50 transition-all duration-300",
+          isScrolled ? "py-2" : "py-4"
+        )}
+        layout
+      >
+        <div className="px-4">
+          <div className="flex items-center justify-between max-w-6xl mx-auto">
+            {/* Заголовок */}
+            <motion.h1
+              className={cn(
+                "font-serif font-light transition-all duration-300",
+                isScrolled ? "text-xl" : "text-2xl"
+              )}
+              layout
+            >
+              Каталог
+            </motion.h1>
 
-        {/* Поисковая строка */}
-        <div className="relative mb-4">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            type="text"
-            placeholder="Поиск книг, авторов, серий..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-10 pr-4 py-3 bg-background/80 backdrop-blur-sm border-border/50 rounded-xl transition-all duration-300 focus:border-primary/50"
-          />
-        </div>
-
-        {/* Фильтры и сортировка */}
-        <div className="space-y-4">
-          <div className="flex flex-wrap gap-3 items-center justify-between">
+            {/* Компактные контролы */}
             <div className="flex items-center gap-2">
+              {/* Кнопка фильтров */}
               <Button
-                variant="outline"
+                variant={showFilters ? "default" : "outline"}
                 size="sm"
                 onClick={() => setShowFilters(!showFilters)}
-                className="gap-2 transition-all duration-300 hover:bg-primary/10 hover:text-primary hover:border-primary/30"
+                className="gap-2 transition-all duration-300"
               >
                 <Filter className="h-4 w-4" />
-                Фильтры
-                <ChevronDown className={cn(
-                  "h-4 w-4 transition-transform duration-300",
-                  showFilters && "rotate-180"
-                )} />
+                {isScrolled ? "" : "Фильтры"}
               </Button>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="text-sm bg-background/80 backdrop-blur-sm border border-border/50 rounded-lg px-3 py-2 transition-all duration-300 hover:border-primary/30 focus:border-primary/50"
-              >
-                <option value="title">По названию</option>
-                <option value="year">По году</option>
-                <option value="price">По цене</option>
-              </select>
-
-              <div className="flex bg-background/80 backdrop-blur-sm border border-border/50 rounded-lg p-1 transition-all duration-300">
+              {/* Переключение вида */}
+              <div className="flex bg-background border border-border rounded-lg p-1">
                 <Button
                   variant={viewMode === 'grid' ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode('grid')}
-                  className="h-8 w-8 p-0 transition-all duration-300"
+                  className="h-8 w-8 p-0"
                 >
                   <Grid className="h-4 w-4" />
                 </Button>
@@ -454,7 +451,7 @@ export const Catalog = () => {
                   variant={viewMode === 'list' ? "default" : "ghost"}
                   size="sm"
                   onClick={() => setViewMode('list')}
-                  className="h-8 w-8 p-0 transition-all duration-300"
+                  className="h-8 w-8 p-0"
                 >
                   <List className="h-4 w-4" />
                 </Button>
@@ -462,206 +459,231 @@ export const Catalog = () => {
             </div>
           </div>
 
-          {/* Расширенные фильтры */}
-          <AnimatePresence>
-            {showFilters && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                className="bg-background/50 backdrop-blur-sm border border-border/30 rounded-xl p-4 space-y-6 overflow-hidden"
-              >
+          {/* Поисковая строка - всегда видна */}
+          <div className="max-w-6xl mx-auto mt-3">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Поиск книг, авторов..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 pr-4 py-2 bg-background border-border rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Выдвижные фильтры */}
+      <AnimatePresence>
+        {showFilters && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowFilters(false)}
+              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30 lg:hidden"
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: "spring", damping: 25, stiffness: 300 }}
+              className="fixed top-0 right-0 bottom-0 w-80 bg-background border-l border-border z-40 overflow-y-auto lg:hidden"
+            >
+              <div className="p-4">
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-lg font-semibold">Фильтры</h2>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setShowFilters(false)}
+                    className="h-8 w-8"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+
+                {/* Сортировка */}
+                <div className="space-y-3 mb-6">
+                  <h3 className="font-medium">Сортировка</h3>
+                  <select
+                    value={sortBy}
+                    onChange={(e) => setSortBy(e.target.value as any)}
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2"
+                  >
+                    <option value="title">По названию</option>
+                    <option value="year">По году</option>
+                    <option value="price">По цене</option>
+                  </select>
+                </div>
+
                 {/* Категории */}
-                <div>
-                  <h3 className="text-sm font-medium mb-3 text-foreground">Категории</h3>
-                  <div className="flex flex-wrap gap-2">
+                <div className="space-y-3 mb-6">
+                  <h3 className="font-medium">Категории</h3>
+                  <div className="space-y-2">
                     {categories.map((category) => (
-                      <Button
+                      <button
                         key={category}
-                        variant={selectedCategory === category ? "default" : "outline"}
-                        size="sm"
                         onClick={() => setSelectedCategory(category)}
                         className={cn(
-                          "transition-all duration-200 whitespace-nowrap",
+                          "w-full text-left px-3 py-2 rounded-lg transition-colors duration-200",
                           selectedCategory === category
-                            ? "bg-primary shadow-lg shadow-primary/25"
-                            : "bg-background/80 backdrop-blur-sm hover:bg-background/90 border-border/50"
+                            ? "bg-primary text-primary-foreground"
+                            : "bg-muted/50 hover:bg-muted"
                         )}
                       >
                         {category === 'all' ? 'Все категории' : category}
-                      </Button>
+                      </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Диапазон цен */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-medium text-foreground">Цена</h3>
-                    <span className="text-sm text-muted-foreground bg-background/80 px-3 py-1 rounded-full border border-border/30">
-                      {formatPrice(priceRange[0])}₽ - {formatPrice(priceRange[1])}₽
-                    </span>
-                  </div>
-
-                  <div className="space-y-3">
+                {/* Цена */}
+                <div className="space-y-3">
+                  <h3 className="font-medium">Цена</h3>
+                  <div className="space-y-4">
                     <Slider
                       value={[priceRange[0], priceRange[1]]}
                       min={0}
                       max={maxPrice}
                       step={50}
                       onValueChange={(value) => setPriceRange([value[0], value[1]])}
-                      className="py-2"
                     />
-
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span>0₽</span>
-                      <span>{formatPrice(maxPrice)}₽</span>
+                    <div className="flex items-center justify-between text-sm">
+                      <span>{formatPrice(priceRange[0])}₽</span>
+                      <span>{formatPrice(priceRange[1])}₽</span>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </div>
-      </div>
-
-      {/* Результаты с прокруткой */}
-      <div className="flex-1 overflow-auto px-6 pb-6">
-        <motion.div 
-          layout
-          className={cn(
-            "grid gap-6",
-            viewMode === 'grid' ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" : "grid-cols-1"
-          )}
-        >
-          {sortedBooks.map((book) => (
-            <motion.div
-              key={book.id}
-              layout
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              onClick={() => setSelectedBook(book)}
-              className={cn(
-                "group cursor-pointer transition-all duration-300 hover:scale-105 bg-background/50 backdrop-blur-sm border border-border/30 rounded-xl p-4 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/10 flex flex-col",
-                viewMode === 'list' && "flex-row gap-4 items-start"
-              )}
-            >
-              {/* Обложка книги */}
-              <div className={cn(
-                "bg-gradient-to-br from-primary/10 to-muted/30 rounded-lg overflow-hidden flex-shrink-0 border border-border/20 mb-3 relative",
-                viewMode === 'grid' ? "aspect-[3/4] w-full" : "w-24 aspect-[3/4]"
-              )}>
-                {book.image ? (
-                  <img
-                    src={book.image}
-                    alt={book.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                    onError={(e) => {
-                      const target = e.target as HTMLImageElement;
-                      target.style.display = 'none';
-                    }}
-                  />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center p-2 bg-muted/50">
-                    <ImageIcon className="h-6 w-6 text-muted-foreground mb-2" />
-                    <span className="text-xs text-muted-foreground text-center font-medium leading-tight">
-                      {book.series || book.title}
-                    </span>
-                  </div>
-                )}
-              </div>
-
-              {/* Информация о книге */}
-              <div className={cn(
-                "flex-1 min-w-0 flex flex-col",
-                viewMode === 'grid' ? "gap-2" : "gap-3"
-              )}>
-                {book.series && (
-                  <p className="text-xs font-semibold text-primary uppercase tracking-wider">
-                    {book.series}
-                  </p>
-                )}
-
-                <h3 className={cn(
-                  "font-medium leading-tight group-hover:text-primary transition-colors line-clamp-2",
-                  viewMode === 'grid' ? "text-sm" : "text-lg"
-                )}>
-                  {book.title}
-                </h3>
-
-                <p className={cn(
-                  "text-muted-foreground",
-                  viewMode === 'grid' ? "text-xs" : "text-sm"
-                )}>
-                  {book.author}
-                </p>
-
-                {/* Цена и количество */}
-                <div className="flex items-center justify-between mt-auto">
-                  <div className="flex flex-col">
-                    <span className="text-lg font-bold text-primary">
-                      {formatPrice(book.price)}₽
-                    </span>
-                    <span className="text-xs text-muted-foreground">
-                      {book.quantity}
-                    </span>
-                  </div>
-
-                  <Button
-                    size="sm"
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      handleAddToCart(book)
-                    }}
-                    className="h-8 w-8 p-0 bg-primary hover:bg-primary/90 transition-transform hover:scale-110"
-                  >
-                    <ShoppingCart className="h-4 w-4" />
-                  </Button>
-                </div>
-
-                <div className="flex flex-wrap gap-1 mt-2">
-                  <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded-full">
-                    {book.category}
-                  </span>
-                  <span className="text-xs px-2 py-1 bg-muted/50 text-muted-foreground rounded-full">
-                    {book.year}
-                  </span>
-                </div>
-
-                {viewMode === 'list' && (
-                  <div className="flex flex-wrap gap-1">
-                    {book.tags.map((tag: string, index: number) => (
-                      <span
-                        key={index}
-                        className="text-xs px-2 py-1 bg-background/80 text-muted-foreground rounded-full border border-border/30"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
               </div>
             </motion.div>
-          ))}
-        </motion.div>
-
-        {/* Сообщение если ничего не найдено */}
-        {sortedBooks.length === 0 && (
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center py-12"
-          >
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <p className="text-muted-foreground text-lg">Книги не найдены</p>
-            <p className="text-sm text-muted-foreground/70 mt-2">
-              Попробуйте изменить параметры поиска или фильтры
-            </p>
-          </motion.div>
+          </>
         )}
+      </AnimatePresence>
+
+      {/* Основной контент */}
+      <div ref={contentRef} className="flex-1 overflow-auto">
+        <div className="max-w-6xl mx-auto p-4">
+          {/* Десктопные фильтры */}
+          <div className="hidden lg:block mb-6">
+            <div className="flex items-center gap-4">
+              <div className="flex-1 flex gap-2 flex-wrap">
+                {categories.map((category) => (
+                  <Button
+                    key={category}
+                    variant={selectedCategory === category ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setSelectedCategory(category)}
+                  >
+                    {category === 'all' ? 'Все' : category}
+                  </Button>
+                ))}
+              </div>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value as any)}
+                className="bg-background border border-border rounded-lg px-3 py-2"
+              >
+                <option value="title">По названию</option>
+                <option value="year">По году</option>
+                <option value="price">По цене</option>
+              </select>
+            </div>
+          </div>
+
+          {/* Результаты */}
+          <motion.div
+            layout
+            className={cn(
+              "grid gap-4",
+              viewMode === 'grid' ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" : "grid-cols-1"
+            )}
+          >
+            {sortedBooks.map((book) => (
+              <motion.div
+                key={book.id}
+                layout
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                onClick={() => setSelectedBook(book)}
+                className={cn(
+                  "cursor-pointer bg-background border border-border rounded-lg p-3 hover:shadow-lg transition-all duration-300 active:scale-95 flex flex-col",
+                  viewMode === 'list' && "flex-row gap-4 items-start"
+                )}
+              >
+                {/* Обложка книги */}
+                <div className={cn(
+                  "bg-gradient-to-br from-primary/5 to-muted/20 rounded-lg overflow-hidden flex-shrink-0 mb-3",
+                  viewMode === 'grid' ? "aspect-[3/4] w-full" : "w-20 aspect-[3/4]"
+                )}>
+                  {book.image ? (
+                    <img
+                      src={book.image}
+                      alt={book.title}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-muted/30">
+                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+
+                {/* Информация о книге */}
+                <div className={cn(
+                  "flex-1 min-w-0 flex flex-col",
+                  viewMode === 'grid' ? "gap-1" : "gap-2"
+                )}>
+                  <h3 className={cn(
+                    "font-medium leading-tight line-clamp-2",
+                    viewMode === 'grid' ? "text-sm" : "text-base"
+                  )}>
+                    {book.title}
+                  </h3>
+
+                  <p className={cn(
+                    "text-muted-foreground",
+                    viewMode === 'grid' ? "text-xs" : "text-sm"
+                  )}>
+                    {book.author}
+                  </p>
+
+                  <div className="flex items-center justify-between mt-auto pt-2">
+                    <div className="text-lg font-bold text-primary">
+                      {formatPrice(book.price)}₽
+                    </div>
+                    <Button
+                      size="sm"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleAddToCart(book)
+                      }}
+                      className="h-7 w-7 p-0 bg-primary hover:bg-primary/90"
+                    >
+                      <ShoppingCart className="h-3 w-3" />
+                    </Button>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </motion.div>
+
+          {/* Сообщение если ничего не найдено */}
+          {sortedBooks.length === 0 && (
+            <div className="text-center py-12">
+              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+                <Search className="h-8 w-8 text-muted-foreground" />
+              </div>
+              <p className="text-muted-foreground text-lg">Книги не найдены</p>
+              <p className="text-sm text-muted-foreground/70 mt-2">
+                Попробуйте изменить параметры поиска
+              </p>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Компонент детального просмотра */}
