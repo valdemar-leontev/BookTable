@@ -31,10 +31,10 @@ export const NavBar = () => {
               key={item.id}
               variant="ghost"
               className={cn(
-                "flex flex-col h-auto p-3 space-y-1 transition-all duration-150 relative",
+                "flex flex-col h-auto p-3 space-y-1 transition-all duration-150 relative !bg-transparent",
                 isActive
                   ? "text-primary"
-                  : "text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground"
               )}
               onClick={() => handleTabClick(item.id)}
             >

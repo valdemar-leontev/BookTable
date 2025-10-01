@@ -37,8 +37,8 @@ export function Header() {
           size="icon"
           onClick={toggleTheme}
           className={`h-10 w-10 rounded-full transition-all duration-500 hover:scale-110 ${theme === "light"
-            ? "bg-amber-100 hover:bg-amber-200 text-amber-600"
-            : "bg-blue-900/30 hover:bg-blue-800/50 text-blue-300"
+            ? "!bg-amber-100 text-amber-600"
+            : "!bg-blue-900/30 text-blue-300"
             }`}
         >
           {theme === "light" ? (

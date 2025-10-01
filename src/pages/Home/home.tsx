@@ -41,19 +41,15 @@ export const Home = () => {
         </div>
 
         {/* Центральная часть */}
-        <div className="flex items-center justify-center relative z-10 mt-8">
+        <div className="flex items-center justify-center relative z-10 mt-8 ">
           <Button
-            variant="outline"
             size="lg"
-            className="group relative border-foreground/20 bg-background/50 backdrop-blur-sm hover:border-primary/50 hover:bg-gradient-to-r hover:from-primary/20 hover:via-primary/40 hover:to-primary/20 transition-all duration-500 text-2xl font-[Playfair Display] font-semibold tracking-wider rounded-3xl px-14 py-6 shadow-lg hover:shadow-xl transform hover:scale-105"
+            className="text-2xl font-[Playfair Display] font-semibold tracking-wider rounded-3xl px-14 py-6 !bg-accent !text-white"
             onClick={() => setActiveTab('catalog')}
           >
-            <span className="relative z-10">Открыть каталог</span>
-            {/* Мягкое подсвечивание */}
-            <div className="absolute inset-0 rounded-3xl bg-gradient-to-r from-primary/30 via-primary/20 to-primary/30 opacity-0 group-hover:opacity-100 transition-opacity duration-700 blur-xl" />
+            Открыть каталог
           </Button>
         </div>
-
         {/* Нижняя часть */}
         <div className="text-center relative z-10">
           <p className="text-muted-foreground text-xs tracking-widest uppercase">
