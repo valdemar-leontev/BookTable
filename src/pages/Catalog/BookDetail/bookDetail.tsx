@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { ArrowLeft, ShoppingCart, Heart, Share2, Star, BookOpen, User, Calendar, Tag, ZoomIn, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Navigation, Thumbs, FreeMode } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
+
 
 interface Book {
   id: number
@@ -35,14 +36,47 @@ interface BookDetailProps {
 
 export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailProps) => {
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null)
+  const [_, setMainSwiper] = useState<SwiperType | null>(null)
   const [isLiked, setIsLiked] = useState(false)
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0)
 
+  // Рефы для предотвращения memory leaks
+  const thumbsSwiperRef = useRef<SwiperType | null>(null)
+  const mainSwiperRef = useRef<SwiperType | null>(null)
+
+  // Очистка swiper при размонтировании
+  useEffect(() => {
+    return () => {
+      if (thumbsSwiperRef.current && !thumbsSwiperRef.current.destroyed) {
+        thumbsSwiperRef.current.destroy(true, true)
+      }
+      if (mainSwiperRef.current && !mainSwiperRef.current.destroyed) {
+        mainSwiperRef.current.destroy(true, true)
+      }
+    }
+  }, [])
+
+  // Очистка при закрытии модалки
+  useEffect(() => {
+    if (!isOpen) {
+      if (thumbsSwiperRef.current && !thumbsSwiperRef.current.destroyed) {
+        thumbsSwiperRef.current.destroy(true, true)
+        thumbsSwiperRef.current = null
+        setThumbsSwiper(null)
+      }
+      if (mainSwiperRef.current && !mainSwiperRef.current.destroyed) {
+        mainSwiperRef.current.destroy(true, true)
+        mainSwiperRef.current = null
+        setMainSwiper(null)
+      }
+    }
+  }, [isOpen])
+
   if (!book) return null
 
   const images = book.additionalImages && book.additionalImages.length > 0
-    ? [book.image, ...book.additionalImages]
+    ? [book.image, ...book.additionalImages, book.image, ...book.additionalImages, book.image, ...book.additionalImages]
     : [book.image]
 
   const formatPrice = (price: number) => {
@@ -81,6 +115,19 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
     setIsFullscreen(false)
   }
 
+  const handleThumbsSwiper = (swiper: SwiperType) => {
+    thumbsSwiperRef.current = swiper
+    setThumbsSwiper(swiper)
+  }
+
+  const handleMainSwiper = (swiper: SwiperType) => {
+    mainSwiperRef.current = swiper
+    setMainSwiper(swiper)
+  }
+
+  // Безопасная проверка для thumbs
+  const safeThumbsSwiper = thumbsSwiper && !thumbsSwiper.destroyed ? thumbsSwiper : null
+
   return (
     <>
       <AnimatePresence>
@@ -106,7 +153,7 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
               <div className="w-full h-full bg-background/95 backdrop-blur-2xl border border-border/50 flex flex-col">
 
                 {/* Header */}
-                <div className="flex items-center justify-between p-6 border-b border-border/30 bg-background/50 flex-shrink-0">
+                <div className="flex items-center justify-between p-2 border-b border-border/30 bg-background/50 flex-shrink-0">
                   <Button
                     variant="ghost"
                     size="icon"
@@ -155,9 +202,11 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                             type: 'progressbar',
                           }}
                           navigation={true}
-                          thumbs={{ swiper: thumbsSwiper }}
+                          thumbs={{ swiper: safeThumbsSwiper }}
                           modules={[Pagination, Navigation, Thumbs]}
                           className="h-full"
+                          onSwiper={handleMainSwiper}
+                          key={book.id} // Важно: меняем key при смене книги
                         >
                           {images.map((image, index) => (
                             <SwiperSlide key={index}>
@@ -189,19 +238,20 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                         <div className="px-2">
                           <Swiper
                             modules={[FreeMode, Thumbs]}
-                            onSwiper={setThumbsSwiper}
+                            onSwiper={handleThumbsSwiper}
                             watchSlidesProgress
                             freeMode={true}
                             slidesPerView={4}
                             spaceBetween={12}
                             className="thumbnails-swiper"
+                            key={`thumbs-${book.id}`} // Важно: меняем key при смене книги
                           >
                             {images.map((image, index) => (
                               <SwiperSlide key={index}>
                                 <div
                                   className={cn(
                                     "aspect-[3/4] rounded-lg overflow-hidden border-2 cursor-pointer transition-all duration-200",
-                                    thumbsSwiper?.activeIndex === index
+                                    safeThumbsSwiper?.activeIndex === index
                                       ? "border-primary shadow-lg shadow-primary/25 scale-105"
                                       : "border-border/30 hover:border-primary/50"
                                   )}
