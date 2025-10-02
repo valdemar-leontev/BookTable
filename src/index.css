@@ -173,3 +173,51 @@ body {
   animation: gradient-x 3s ease infinite;
   background-size: 200% 200%;
 }
+
+/* Progress bar пагинация */
+.swiper-pagination-progressbar {
+  background: hsl(var(--muted-foreground) / 0.2);
+  height: 3px;
+}
+
+.swiper-pagination-progressbar-fill {
+  background: hsl(var(--primary));
+}
+
+/* Навигационные стрелки */
+.swiper-button-next,
+.swiper-button-prev {
+  color: hsl(var(--primary));
+  background: hsl(var(--background) / 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid hsl(var(--border) / 0.5);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+}
+
+.swiper-button-next:after,
+.swiper-button-prev:after {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.swiper-button-next:hover,
+.swiper-button-prev:hover {
+  background: hsl(var(--background));
+  transform: scale(1.1);
+}
+
+/* Стили для миниатюр */
+.thumbnails-swiper .swiper-slide {
+  opacity: 0.6;
+  transition: opacity 0.3s ease;
+}
+
+.thumbnails-swiper .swiper-slide-thumb-active {
+  opacity: 1;
+}
+
+.thumbnails-swiper .swiper-slide:hover {
+  opacity: 0.8;
+}
