@@ -54,15 +54,6 @@
   --sidebar-ring: oklch(0.708 0 0);
 }
 
-* {
-  transition: background-color var(--transition-duration) var(--transition-timing),
-              color var(--transition-duration) var(--transition-timing),
-              border-color var(--transition-duration) var(--transition-timing),
-              fill var(--transition-duration) var(--transition-timing),
-              stroke var(--transition-duration) var(--transition-timing),
-              opacity var(--transition-duration) var(--transition-timing),
-              box-shadow var(--transition-duration) var(--transition-timing) !important;
-}
 
 body {
   transition-duration: var(--transition-duration);

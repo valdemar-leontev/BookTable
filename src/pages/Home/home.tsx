@@ -7,10 +7,7 @@ export const Home = () => {
   return (
     <>
       {/* Инлайновое подключение шрифтов */}
-      <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@300;400;500&display=swap"
-        rel="stylesheet"
-      />
+
 
       <div
         className="h-full grid grid-rows-[auto_1fr_auto] items-center px-6 py-8 relative overflow-hidden"

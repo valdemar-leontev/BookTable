@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
-import { Search, Grid, List, Filter, ShoppingCart, ImageIcon, ArrowLeft, Heart, Share2, X } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
+import { Search, Grid, List, Filter, ShoppingCart, ImageIcon, X } from 'lucide-react'
+
 import { Slider } from "@/components/ui/slider"
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
+import { BookDetail } from './BookDetail/bookDetail'
 
 // Mock данные для христианских книг с полной информацией
 const mockBooks = [
@@ -118,228 +118,6 @@ const mockBooks = [
   }
 ]
 
-// Компонент детального просмотра книги
-const BookDetail = ({ book, isOpen, onClose, onAddToCart }: any) => {
-  const [selectedImage, _] = useState(0)
-  const [isLiked, setIsLiked] = useState(false)
-
-  if (!book) return null
-
-  const images = book.additionalImages && book.additionalImages.length > 0
-    ? [book.image, ...book.additionalImages]
-    : [book.image]
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ru-RU').format(price)
-  }
-
-  const handleAddToCart = () => {
-    onAddToCart(book)
-  }
-
-  return (
-    <AnimatePresence>
-      {isOpen && (
-        <>
-          {/* Backdrop */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={onClose}
-            className="fixed inset-0 bg-background/80 backdrop-blur-xl z-50"
-          />
-
-          {/* Main Modal */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-4 md:inset-8 lg:inset-12 xl:inset-20 z-50 overflow-hidden"
-          >
-            <div className="w-full h-full bg-background/95 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-
-              {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-border/30 bg-background/50">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={onClose}
-                  className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
-                >
-                  <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
-                </Button>
-
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => setIsLiked(!isLiked)}
-                    className={cn(
-                      "h-10 w-10 rounded-xl transition-all duration-300",
-                      isLiked
-                        ? "text-red-500 bg-red-500/10 hover:bg-red-500/20"
-                        : "hover:bg-primary/10 hover:text-primary"
-                    )}
-                  >
-                    <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
-                  </Button>
-
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-300"
-                  >
-                    <Share2 className="h-5 w-5" />
-                  </Button>
-                </div>
-              </div>
-
-              {/* Content */}
-              <div className="flex-1 overflow-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
-
-                  {/* Left Column - Images */}
-                  <div className="space-y-6">
-                    {/* Main Image */}
-                    <motion.div
-                      key={selectedImage}
-                      initial={{ opacity: 0, scale: 0.95 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.3 }}
-                      className="aspect-[3/4] rounded-2xl overflow-hidden bg-gradient-to-br from-primary/10 to-muted/30 border border-border/30 relative group"
-                    >
-                      <img
-                        src={images[selectedImage]}
-                        alt={book.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </motion.div>
-                  </div>
-
-                  {/* Right Column - Details */}
-                  <div className="space-y-6">
-                    {/* Series Badge */}
-                    {book.series && (
-                      <div className="inline-flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-full border border-primary/20">
-                        <span className="text-sm font-medium uppercase tracking-wide">
-                          {book.series}
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Title and Author */}
-                    <div className="space-y-3">
-                      <h1 className="text-3xl lg:text-4xl font-serif font-light leading-tight">
-                        {book.title}
-                      </h1>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <span className="text-lg">{book.author}</span>
-                      </div>
-                    </div>
-
-                    {/* Rating */}
-                    {book.rating && (
-                      <div className="flex items-center gap-3">
-                        <div className="flex items-center gap-1">
-                          {[...Array(5)].map((_, i) => (
-                            <span
-                              key={i}
-                              className={cn(
-                                "text-lg",
-                                i < Math.floor(book.rating!)
-                                  ? "text-amber-400"
-                                  : "text-muted-foreground/30"
-                              )}
-                            >
-                              ★
-                            </span>
-                          ))}
-                        </div>
-                        <span className="text-sm text-muted-foreground">
-                          {book.rating}/5
-                        </span>
-                      </div>
-                    )}
-
-                    {/* Meta Information */}
-                    <div className="grid grid-cols-2 gap-4 py-4">
-                      <div className="flex items-center gap-3 text-sm">
-                        <div className="p-2 bg-primary/10 rounded-lg">
-                          <span className="text-primary">📖</span>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Страниц</p>
-                          <p className="font-medium">{book.pages || "Не указано"}</p>
-                        </div>
-                      </div>
-
-                      <div className="flex items-center gap-3 text-sm">
-                        <div className="p-2 bg-primary/10 rounded-lg">
-                          <span className="text-primary">📅</span>
-                        </div>
-                        <div>
-                          <p className="text-muted-foreground">Год издания</p>
-                          <p className="font-medium">{book.year}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Description */}
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">Описание</h3>
-                      <p className="text-muted-foreground leading-relaxed">
-                        {book.description}
-                      </p>
-                    </div>
-
-                    {/* Tags */}
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">Теги</h3>
-                      <div className="flex flex-wrap gap-2">
-                        {book.tags.map((tag: string, index: number) => (
-                          <span
-                            key={index}
-                            className="px-3 py-1.5 bg-background border border-border rounded-full text-sm text-muted-foreground hover:bg-primary/5 hover:text-primary hover:border-primary/30 transition-all duration-300"
-                          >
-                            #{tag}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Price and Action */}
-                    <div className="flex items-center justify-between pt-6 border-t border-border/30">
-                      <div className="space-y-1">
-                        <div className="text-3xl font-bold text-primary">
-                          {formatPrice(book.price)}₽
-                        </div>
-                        <div className="text-sm text-muted-foreground">
-                          {book.quantity}
-                        </div>
-                      </div>
-
-                      <Button
-                        onClick={handleAddToCart}
-                        size="lg"
-                        className="rounded-xl px-8 py-3 text-lg font-semibold bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105 hover:shadow-lg hover:shadow-primary/25"
-                      >
-                        <ShoppingCart className="h-5 w-5 mr-2" />
-                        В корзину
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
-  )
-}
-
 // Основной компонент каталога
 export const Catalog = () => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -406,7 +184,7 @@ export const Catalog = () => {
       {/* Компактный хедер */}
       <motion.div
         className={cn(
-          "sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50 transition-all duration-300",
+          "sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50",
           isScrolled ? "py-2" : "py-4"
         )}
         layout
@@ -416,7 +194,7 @@ export const Catalog = () => {
             {/* Заголовок */}
             <motion.h1
               className={cn(
-                "font-serif font-light transition-all duration-300",
+                "font-serif font-light",
                 isScrolled ? "text-xl" : "text-2xl"
               )}
               layout
@@ -427,34 +205,42 @@ export const Catalog = () => {
             {/* Компактные контролы */}
             <div className="flex items-center gap-2">
               {/* Кнопка фильтров */}
-              <Button
-                variant={showFilters ? "default" : "outline"}
-                size="sm"
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setShowFilters(!showFilters)}
-                className="gap-2 transition-all duration-300"
+                className={cn(
+                  "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm !text-primary",
+                  showFilters
+                    ? "text-primary-foreground border-primary !bg-background"
+                    : "!bg-background border-border"
+                )}
               >
                 <Filter className="h-4 w-4" />
                 {isScrolled ? "" : "Фильтры"}
-              </Button>
+              </motion.button>
 
               {/* Переключение вида */}
-              <div className="flex bg-background border border-border rounded-lg p-1">
-                <Button
-                  variant={viewMode === 'grid' ? "default" : "ghost"}
-                  size="sm"
+              <div className="flex !bg-background border border-border rounded-lg p-1">
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setViewMode('grid')}
-                  className="h-8 w-8 p-0"
+                  className={cn(
+                    "h-8 w-8 flex items-center justify-center rounded !bg-background",
+                    viewMode === 'grid' ? "!bg-primary text-primary-foreground" : "hover:bg-muted/50"
+                  )}
                 >
                   <Grid className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'list' ? "default" : "ghost"}
-                  size="sm"
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => setViewMode('list')}
-                  className="h-8 w-8 p-0"
+                  className={cn(
+                    "h-8 w-8 flex items-center justify-center rounded !bg-background",
+                    viewMode === 'list' ? "!bg-primary text-primary-foreground" : "hover:bg-muted/50"
+                  )}
                 >
                   <List className="h-4 w-4" />
-                </Button>
+                </motion.button>
               </div>
             </div>
           </div>
@@ -463,12 +249,12 @@ export const Catalog = () => {
           <div className="max-w-6xl mx-auto mt-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-              <Input
+              <input
                 type="text"
                 placeholder="Поиск книг, авторов..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-background border-border rounded-lg"
+                className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
               />
             </div>
           </div>
@@ -496,14 +282,13 @@ export const Catalog = () => {
               <div className="p-4">
                 <div className="flex items-center justify-between mb-6">
                   <h2 className="text-lg font-semibold">Фильтры</h2>
-                  <Button
-                    variant="ghost"
-                    size="icon"
+                  <motion.button
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setShowFilters(false)}
-                    className="h-8 w-8"
+                    className="h-8 w-8 flex items-center justify-center hover:bg-muted/50 rounded"
                   >
                     <X className="h-4 w-4" />
-                  </Button>
+                  </motion.button>
                 </div>
 
                 {/* Сортировка */}
@@ -512,7 +297,7 @@ export const Catalog = () => {
                   <select
                     value={sortBy}
                     onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full bg-background border border-border rounded-lg px-3 py-2"
+                    className="w-full bg-background border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
                   >
                     <option value="title">По названию</option>
                     <option value="year">По году</option>
@@ -525,18 +310,19 @@ export const Catalog = () => {
                   <h3 className="font-medium">Категории</h3>
                   <div className="space-y-2">
                     {categories.map((category) => (
-                      <button
+                      <motion.button
                         key={category}
+                        whileTap={{ scale: 0.95 }}
                         onClick={() => setSelectedCategory(category)}
                         className={cn(
-                          "w-full text-left px-3 py-2 rounded-lg transition-colors duration-200",
+                          "w-full text-left px-3 py-2 rounded-lg",
                           selectedCategory === category
-                            ? "bg-primary text-primary-foreground"
-                            : "bg-muted/50 hover:bg-muted"
+                            ? "!bg-primary !text-primary-foreground"
+                            : "!bg-muted/50"
                         )}
                       >
                         {category === 'all' ? 'Все категории' : category}
-                      </button>
+                      </motion.button>
                     ))}
                   </div>
                 </div>
@@ -568,31 +354,40 @@ export const Catalog = () => {
       <div ref={contentRef} className="flex-1 overflow-auto">
         <div className="max-w-6xl mx-auto p-4">
           {/* Десктопные фильтры */}
-          <div className="hidden lg:block mb-6">
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="hidden lg:block mb-6"
+          >
             <div className="flex items-center gap-4">
               <div className="flex-1 flex gap-2 flex-wrap">
                 {categories.map((category) => (
-                  <Button
+                  <motion.button
                     key={category}
-                    variant={selectedCategory === category ? "default" : "outline"}
-                    size="sm"
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedCategory(category)}
+                    className={cn(
+                      "px-4 py-2 rounded-lg text-sm border",
+                      selectedCategory === category
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background border-border hover:bg-muted/50"
+                    )}
                   >
                     {category === 'all' ? 'Все' : category}
-                  </Button>
+                  </motion.button>
                 ))}
               </div>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-background border border-border rounded-lg px-3 py-2"
+                className="bg-background border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
               >
                 <option value="title">По названию</option>
                 <option value="year">По году</option>
                 <option value="price">По цене</option>
               </select>
             </div>
-          </div>
+          </motion.div>
 
           {/* Результаты */}
           <motion.div
@@ -602,78 +397,91 @@ export const Catalog = () => {
               viewMode === 'grid' ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" : "grid-cols-1"
             )}
           >
-            {sortedBooks.map((book) => (
-              <motion.div
-                key={book.id}
-                layout
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                onClick={() => setSelectedBook(book)}
-                className={cn(
-                  "cursor-pointer bg-background border border-border rounded-lg p-3 hover:shadow-lg transition-all duration-300 active:scale-95 flex flex-col",
-                  viewMode === 'list' && "flex-row gap-4 items-start"
-                )}
-              >
-                {/* Обложка книги */}
-                <div className={cn(
-                  "bg-gradient-to-br from-primary/5 to-muted/20 rounded-lg overflow-hidden flex-shrink-0 mb-3",
-                  viewMode === 'grid' ? "aspect-[3/4] w-full" : "w-20 aspect-[3/4]"
-                )}>
-                  {book.image ? (
-                    <img
-                      src={book.image}
-                      alt={book.title}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-muted/30">
-                      <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                    </div>
+            <AnimatePresence mode="popLayout">
+              {sortedBooks.map((book) => (
+                <motion.div
+                  key={book.id}
+                  layout
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.8 }}
+                  whileHover={{ y: -4 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedBook(book)}
+                  className={cn(
+                    "cursor-pointer bg-background border border-border rounded-lg p-3 flex flex-col",
+                    viewMode === 'list' && "flex-row gap-4 items-start"
                   )}
-                </div>
+                >
+                  {/* Обложка книги */}
+                  <motion.div
+                    className={cn(
+                      "bg-gradient-to-br from-primary/5 to-muted/20 rounded-lg overflow-hidden flex-shrink-0 mb-3",
+                      viewMode === 'grid' ? "aspect-[3/4] w-full" : "w-20 aspect-[3/4]"
+                    )}
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    {book.image ? (
+                      <img
+                        src={book.image}
+                        alt={book.title}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-muted/30">
+                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
+                      </div>
+                    )}
+                  </motion.div>
 
-                {/* Информация о книге */}
-                <div className={cn(
-                  "flex-1 min-w-0 flex flex-col",
-                  viewMode === 'grid' ? "gap-1" : "gap-2"
-                )}>
-                  <h3 className={cn(
-                    "font-medium leading-tight line-clamp-2",
-                    viewMode === 'grid' ? "text-sm" : "text-base"
+                  {/* Информация о книге */}
+                  <div className={cn(
+                    "flex-1 min-w-0 flex flex-col",
+                    viewMode === 'grid' ? "gap-1" : "gap-2"
                   )}>
-                    {book.title}
-                  </h3>
+                    <h3 className={cn(
+                      "font-medium leading-tight line-clamp-2",
+                      viewMode === 'grid' ? "text-sm" : "text-base"
+                    )}>
+                      {book.title}
+                    </h3>
 
-                  <p className={cn(
-                    "text-muted-foreground",
-                    viewMode === 'grid' ? "text-xs" : "text-sm"
-                  )}>
-                    {book.author}
-                  </p>
+                    <p className={cn(
+                      "text-muted-foreground",
+                      viewMode === 'grid' ? "text-xs" : "text-sm"
+                    )}>
+                      {book.author}
+                    </p>
 
-                  <div className="flex items-center justify-between mt-auto pt-2">
-                    <div className="text-lg font-bold text-primary">
-                      {formatPrice(book.price)}₽
+                    <div className="flex items-center justify-between mt-auto pt-2">
+                      <div className="text-lg font-bold text-primary">
+                        {formatPrice(book.price)}₽
+                      </div>
+                      <motion.button
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.9 }}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleAddToCart(book)
+                        }}
+                        className="h-7 w-7 flex items-center justify-center bg-primary hover:bg-primary/90 text-primary-foreground rounded"
+                      >
+                        <ShoppingCart className="h-3 w-3" />
+                      </motion.button>
                     </div>
-                    <Button
-                      size="sm"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleAddToCart(book)
-                      }}
-                      className="h-7 w-7 p-0 bg-primary hover:bg-primary/90"
-                    >
-                      <ShoppingCart className="h-3 w-3" />
-                    </Button>
                   </div>
-                </div>
-              </motion.div>
-            ))}
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </motion.div>
 
           {/* Сообщение если ничего не найдено */}
           {sortedBooks.length === 0 && (
-            <div className="text-center py-12">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center py-12"
+            >
               <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
                 <Search className="h-8 w-8 text-muted-foreground" />
               </div>
@@ -681,7 +489,7 @@ export const Catalog = () => {
               <p className="text-sm text-muted-foreground/70 mt-2">
                 Попробуйте изменить параметры поиска
               </p>
-            </div>
+            </motion.div>
           )}
         </div>
       </div>

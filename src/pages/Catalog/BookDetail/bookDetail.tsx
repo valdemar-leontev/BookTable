@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { X, ArrowLeft, ShoppingCart, Heart, Share2, Star, BookOpen, User, Calendar, Tag } from 'lucide-react'
+import { ArrowLeft, ShoppingCart, Heart, Share2, Star, BookOpen, User, Calendar, Tag } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -34,8 +34,8 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
 
   if (!book) return null
 
-  const images = book.additionalImages && book.additionalImages.length > 0 
-    ? [book.image, ...book.additionalImages] 
+  const images = book.additionalImages && book.additionalImages.length > 0
+    ? [book.image, ...book.additionalImages]
     : [book.image]
 
   const formatPrice = (price: number) => {
@@ -44,34 +44,43 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
 
   const handleAddToCart = () => {
     onAddToCart(book)
-    // Можно добавить анимацию или уведомление
   }
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop с высоким z-index */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-background/80 backdrop-blur-xl z-50"
+            className=" !absolute !inset-0 bg-background/80 backdrop-blur-xl !z-[1000]"
+            style={{
+              // iOS фикс для z-index
+              transform: 'translateZ(0)',
+              WebkitTransform: 'translateZ(0)'
+            }}
           />
-          
-          {/* Main Modal */}
+
+          {/* Main Modal с еще более высоким z-index */}
           <motion.div
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ type: "spring", damping: 25, stiffness: 300 }}
-            className="fixed inset-4 md:inset-8 lg:inset-12 xl:inset-20 z-50 overflow-hidden"
+            className="absolute inset-0 !z-[1001] overflow-hidden"
+            style={{
+              // iOS фикс
+              transform: 'translateZ(0)',
+              WebkitTransform: 'translateZ(0)'
+            }}
           >
-            <div className="w-full h-full bg-background/95 backdrop-blur-2xl border border-border/50 rounded-3xl shadow-2xl overflow-hidden flex flex-col">
-              
+            <div className="w-full h-full bg-background/95 backdrop-blur-2xl border border-border/50 flex flex-col">
+
               {/* Header */}
-              <div className="flex items-center justify-between p-6 border-b border-border/30 bg-background/50">
+              <div className="flex items-center justify-between p-6 border-b border-border/30 bg-background/50 flex-shrink-0">
                 <Button
                   variant="ghost"
                   size="icon"
@@ -80,7 +89,7 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                 >
                   <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
                 </Button>
-                
+
                 <div className="flex items-center gap-2">
                   <Button
                     variant="ghost"
@@ -88,14 +97,14 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                     onClick={() => setIsLiked(!isLiked)}
                     className={cn(
                       "h-10 w-10 rounded-xl transition-all duration-300",
-                      isLiked 
-                        ? "text-red-500 bg-red-500/10 hover:bg-red-500/20" 
+                      isLiked
+                        ? "text-red-500 bg-red-500/10 hover:bg-red-500/20"
                         : "hover:bg-primary/10 hover:text-primary"
                     )}
                   >
                     <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
                   </Button>
-                  
+
                   <Button
                     variant="ghost"
                     size="icon"
@@ -103,22 +112,13 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                   >
                     <Share2 className="h-5 w-5" />
                   </Button>
-                  
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={onClose}
-                    className="h-10 w-10 rounded-xl hover:bg-destructive/10 hover:text-destructive transition-all duration-300 lg:hidden"
-                  >
-                    <X className="h-5 w-5" />
-                  </Button>
                 </div>
               </div>
 
               {/* Content */}
               <div className="flex-1 overflow-auto">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8">
-                  
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 p-6 lg:p-8 max-h-full">
+
                   {/* Left Column - Images */}
                   <div className="space-y-6">
                     {/* Main Image */}
@@ -134,7 +134,7 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                         alt={book.title}
                         className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                       />
-                      
+
                       {/* Image Navigation */}
                       {images.length > 1 && (
                         <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex gap-2">
@@ -144,8 +144,8 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                               onClick={() => setSelectedImage(index)}
                               className={cn(
                                 "w-3 h-3 rounded-full transition-all duration-300 border-2 border-background/80",
-                                selectedImage === index 
-                                  ? "bg-primary scale-125" 
+                                selectedImage === index
+                                  ? "bg-primary scale-125"
                                   : "bg-primary/30 hover:bg-primary/50"
                               )}
                             />
@@ -211,8 +211,8 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                               key={i}
                               className={cn(
                                 "h-5 w-5",
-                                i < Math.floor(book.rating!) 
-                                  ? "fill-amber-400 text-amber-400" 
+                                i < Math.floor(book.rating!)
+                                  ? "fill-amber-400 text-amber-400"
                                   : "fill-muted text-muted-foreground/30"
                               )}
                             />
@@ -235,7 +235,7 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                           <p className="font-medium">{book.pages || "Не указано"}</p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-3 text-sm">
                         <div className="p-2 bg-primary/10 rounded-lg">
                           <Calendar className="h-4 w-4 text-primary" />
@@ -280,7 +280,7 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                           {book.quantity}
                         </div>
                       </div>
-                      
+
                       <Button
                         onClick={handleAddToCart}
                         size="lg"
