@@ -1,27 +1,14 @@
+// components/Content/content.tsx
+import { Routes, Route, useLocation } from 'react-router-dom'
 import { Cart } from '@/pages/Cart/cart'
 import { Catalog } from '@/pages/Catalog/catalog'
 import { Home } from '@/pages/Home/home'
 import { Search } from '@/pages/Search/search'
-import { useNavigationStore } from '@/stores/navigation-store'
 import { motion, AnimatePresence } from 'framer-motion'
 
-export const Content = () => {
-  const { activeTab } = useNavigationStore()
 
-  const renderContent = () => {
-    switch (activeTab) {
-      case 'home':
-        return <Home />
-      case 'search':
-        return <Search />
-      case 'catalog':
-        return <Catalog />
-      case 'cart':
-        return <Cart />
-      default:
-        return <Home />
-    }
-  }
+export const Content = () => {
+  const location = useLocation()
 
   const pageVariants = {
     initial: {
@@ -57,17 +44,59 @@ export const Content = () => {
   return (
     <main className="flex-1 overflow-hidden h-full relative">
       <AnimatePresence mode="wait" initial={false}>
-        <motion.div
-          key={activeTab}
-          initial="initial"
-          animate="in"
-          exit="out"
-          variants={pageVariants}
-          transition={pageTransition}
-          className="h-full w-full"
-        >
-          {renderContent()}
-        </motion.div>
+        <Routes location={location} key={location.pathname}>
+          <Route path="/" element={
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="h-full w-full"
+            >
+              <Home />
+            </motion.div>
+          } />
+
+          <Route path="/search" element={
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="h-full w-full"
+            >
+              <Search />
+            </motion.div>
+          } />
+
+          <Route path="/catalog" element={
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="h-full w-full"
+            >
+              <Catalog />
+            </motion.div>
+          } />
+
+          <Route path="/cart" element={
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="h-full w-full"
+            >
+              <Cart />
+            </motion.div>
+          } />
+        </Routes>
       </AnimatePresence>
     </main>
   )

@@ -1,62 +1,85 @@
 import { Home, Search, BookOpen, ShoppingCart } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
-import { useNavigationStore } from '@/stores/navigation-store'
+import { useEffect, useRef, useState } from 'react'
 
 type NavItem = 'home' | 'search' | 'catalog' | 'cart'
 
 export const NavBar = () => {
-  const { activeTab, setActiveTab } = useNavigationStore()
+  const location = useLocation()
+  const [_, setActiveIndex] = useState(0)
+  const [indicatorStyle, setIndicatorStyle] = useState({})
+  const itemsRef = useRef<(HTMLAnchorElement | null)[]>([])
 
   const navItems = [
-    { id: 'home' as NavItem, icon: Home, label: 'Home' },
-    { id: 'search' as NavItem, icon: Search, label: 'Search' },
-    { id: 'catalog' as NavItem, icon: BookOpen, label: 'Catalog' },
-    { id: 'cart' as NavItem, icon: ShoppingCart, label: 'Cart' },
+    { id: 'home' as NavItem, icon: Home, label: 'Главная', path: '/' },
+    { id: 'search' as NavItem, icon: Search, label: 'Поиск', path: '/search' },
+    { id: 'catalog' as NavItem, icon: BookOpen, label: 'Каталог', path: '/catalog' },
+    { id: 'cart' as NavItem, icon: ShoppingCart, label: 'Корзина', path: '/cart' },
   ]
 
-  const handleTabClick = (tabId: NavItem) => {
-    setActiveTab(tabId)
+  const isActive = (path: string) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path))
+
+  // Обновляем позицию индикатора при изменении активного таба
+  useEffect(() => {
+    const currentIndex = navItems.findIndex(item => isActive(item.path))
+    if (currentIndex !== -1) {
+      setActiveIndex(currentIndex)
+      updateIndicatorPosition(currentIndex)
+    }
+  }, [location.pathname])
+
+  const updateIndicatorPosition = (index: number) => {
+    const element = itemsRef.current[index]
+    if (element) {
+      const { offsetLeft, offsetWidth } = element
+      setIndicatorStyle({
+        transform: `translateX(${offsetLeft}px)`,
+        width: `${offsetWidth - 7}px`,
+      })
+    }
+  }
+
+  const handleItemClick = (index: number) => {
+    setActiveIndex(index)
+    updateIndicatorPosition(index)
   }
 
   return (
-    <nav className="bg-background/80 backdrop-blur-md border-t border-border px-4 py-3">
-      <div className="flex justify-between items-center max-w-md mx-auto">
-        {navItems.map((item) => {
+    <nav className="px-4 py-3 safe-area-bottom">
+      <div className="flex justify-between items-center max-w-md mx-auto bg-background rounded-2xl shadow-sm border p-1 relative">
+        {/* Анимированный индикатор */}
+        <div
+          className={cn(
+            "absolute h-full bg-accent/20 rounded-xl transition-all duration-500 ease-out-back",
+            "border border-accent/30 shadow-xs"
+          )}
+          style={indicatorStyle}
+        />
+
+        {navItems.map((item, index) => {
           const Icon = item.icon
-          const isActive = activeTab === item.id
+          const active = isActive(item.path)
 
           return (
-            <Button
+            <Link
               key={item.id}
-              variant="ghost"
+              to={item.path}
+              ref={el => itemsRef.current[index] = el as any}
+              onClick={() => handleItemClick(index)}
               className={cn(
-                "flex flex-col h-auto p-3 space-y-1 transition-all duration-150 relative !bg-transparent",
-                isActive
-                  ? "text-primary"
-                  : "text-muted-foreground"
+                "flex flex-col items-center p-3 rounded-xl transition-all duration-300 relative z-10 flex-1 mx-1",
+                "hover:scale-105 active:scale-95",
+                active
+                  ? "!text-accent"
+                  : "text-gray-500 hover:text-gray-700"
               )}
-              onClick={() => handleTabClick(item.id)}
             >
-              {isActive && (
-                <div className="absolute top-0 w-1 h-1 bg-accent rounded-full" />
-              )}
-
-              <Icon
-                className={cn(
-                  "!h-6 !w-6 !transition-all !duration-150",
-                  isActive
-                    ? "scale-110 stroke-accent"
-                    : "scale-100 stroke-current"
-                )}
-              />
-              <span className={cn(
-                "text-xs transition-all duration-150",
-                isActive ? "font-bold text-accent" : "font-medium"
-              )}>
+              <Icon className="h-5 w-5 mb-1 transition-transform duration-300" />
+              <span className="text-xs font-medium transition-all duration-300">
                 {item.label}
               </span>
-            </Button>
+            </Link>
           )
         })}
       </div>
