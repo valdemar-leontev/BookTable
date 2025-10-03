@@ -340,7 +340,7 @@ export const Catalog = () => {
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setShowFilters(false)}
-                    className="h-8 w-8 flex items-center justify-center hover:bg-muted rounded"
+                    className="h-8 w-8 flex items-center justify-center !bg-muted rounded"
                   >
                     <X className="h-4 w-4" />
                   </motion.button>
@@ -520,7 +520,7 @@ export const Catalog = () => {
                           e.stopPropagation()
                           handleAddToCart(book)
                         }}
-                        className="h-7 w-7 flex items-center justify-center bg-primary text-primary-foreground rounded"
+                        className="h-7 w-7 flex items-center justify-center !bg-primary !text-primary-foreground rounded"
                       >
                         <ShoppingCart className="h-3 w-3" />
                       </motion.button>
