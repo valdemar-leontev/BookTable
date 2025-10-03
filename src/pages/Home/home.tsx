@@ -64,7 +64,7 @@ export const Home = () => {
           </motion.div>
 
           <motion.h1
-            className="text-6xl font-serif font-light text-foreground tracking-tight"
+            className="text-4xl font-serif font-light text-foreground tracking-tight"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ delay: 0.2, duration: 0.8 }}
