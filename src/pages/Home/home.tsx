@@ -74,15 +74,15 @@ export const Home = () => {
 
           <motion.div
             className="flex items-center justify-center gap-4"
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             transition={{ delay: 0.5, duration: 0.8 }}
           >
-            <div className="w-12 h-px bg-gradient-to-r from-transparent to-border" />
+            <div className="w-8 h-px bg-gradient-to-r from-transparent to-border" />
             <motion.p
-              className="text-foreground/60 text-lg tracking-wider font-light whitespace-nowrap"
+              className="text-foreground/70 text-lg font-light text-center max-w-md leading-relaxed"
               animate={{
-                opacity: [0.6, 1, 0.6],
+                opacity: [0.7, 1, 0.7],
               }}
               transition={{
                 duration: 3,
@@ -90,10 +90,19 @@ export const Home = () => {
                 ease: "easeInOut"
               }}
             >
-              ЧТЕНИЕ • ЗНАНИЕ • МУДРОСТЬ
+              «Посещайте много хороших книг, но живите Библией»
             </motion.p>
-            <div className="w-12 h-px bg-gradient-to-l from-transparent to-border" />
+            <div className="w-8 h-px bg-gradient-to-l from-transparent to-border" />
           </motion.div>
+          
+          <motion.p
+            className="text-foreground/50 text-sm"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 1, duration: 0.6 }}
+          >
+            Чарльз Сперджен
+          </motion.p>
         </motion.div>
 
         {/* Центральная кнопка */}
@@ -105,20 +114,23 @@ export const Home = () => {
           <motion.div
             whileHover={{
               scale: 1.05,
-              transition: { duration: 0.2 }
             }}
             whileTap={{ scale: 0.95 }}
+            transition={{ duration: 0.2 }}
           >
             <Button
               size="lg"
               onClick={handleOpenCatalog}
-              variant={'outline'}
-              className="text-lg rounded-xl px-12 py-6 !bg-background !text-foreground"
+              className="text-lg rounded-xl px-12 py-6 !bg-primary !text-primary-foreground hover:bg-primary/90 transition-colors duration-200"
             >
-              <span className="flex items-center gap-2 !text-foreground">
+              <motion.span 
+                className="flex items-center gap-2"
+                whileHover={{ gap: "12px" }}
+                transition={{ duration: 0.2 }}
+              >
                 Открыть каталог
                 <ArrowRight className="h-4 w-4" />
-              </span>
+              </motion.span>
             </Button>
           </motion.div>
         </motion.div>
@@ -133,16 +145,18 @@ export const Home = () => {
           <motion.p
             className="text-muted-foreground text-sm tracking-widest uppercase font-medium"
             whileHover={{ scale: 1.05 }}
-            transition={{ type: "spring", stiffness: 400 }}
+            transition={{ type: "spring", stiffness: 400, damping: 10 }}
           >
             Христианская литература
           </motion.p>
+          
           <motion.div
             className="w-16 h-px bg-gradient-to-r from-transparent via-border to-transparent mx-auto"
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
+            initial={{ scaleX: 0 }}
+            animate={{ scaleX: 1 }}
             transition={{ delay: 1.3, duration: 0.5 }}
           />
+          
           <motion.p
             className="text-muted-foreground/70 text-xs"
             animate={{
