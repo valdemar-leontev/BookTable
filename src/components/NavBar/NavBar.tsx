@@ -51,7 +51,7 @@ export const NavBar = () => {
         {/* Анимированный индикатор */}
         <div
           className={cn(
-            "absolute h-full bg-accent/20 rounded-xl transition-all duration-500 ease-out-back",
+            "absolute h-full bg-accent/20 rounded-xl transition-all duration-700 ease-out-back",
             "border border-accent/30 shadow-xs"
           )}
           style={indicatorStyle}
