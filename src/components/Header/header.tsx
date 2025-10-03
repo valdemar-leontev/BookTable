@@ -11,21 +11,16 @@ export function Header() {
   }
 
   return (
-    <header className="p-4 border-b border-border/50">
+    <header className="px-4 py-3 border-b border-border/50">
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         {/* Логотип и название */}
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg transition-all duration-500 ${theme === "light"
-            ? "text-amber-600"
-            : " text-blue-300"
-            }`}>
-            <img src={logo} className='w-14 h-12' />
-          </div>
+        <div className="flex items-center gap-5">
+          <img src={logo} className="w-10 h-8" />
           <div>
-            <h1 className="text-3xl font-light text-foreground tracking-tight">
+            <h1 className="text-xl font-light !text-foreground">
               Книжный стол
             </h1>
-            <p className="text-[14px] text-muted-foreground">
+            <p className="text-xs !text-muted-foreground">
               {theme === "light" ? "Вы свет миру" : "Свет во тьме светит"}
             </p>
           </div>
@@ -36,15 +31,15 @@ export function Header() {
           variant="ghost"
           size="icon"
           onClick={toggleTheme}
-          className={`h-10 w-10 rounded-full transition-all duration-500 hover:scale-110 ${theme === "light"
-            ? "!bg-amber-100 text-amber-600"
-            : "!bg-blue-900/30 text-blue-300"
+          className={`h-9 w-9 rounded-full transition-all duration-300 hover:scale-105 ${theme === "light"
+              ? "!bg-amber-100 text-amber-600 hover:bg-amber-200"
+              : "!bg-blue-900/30 text-blue-300 hover:bg-blue-900/50"
             }`}
         >
           {theme === "light" ? (
-            <Lightbulb className="h-5 w-5" />
+            <Lightbulb className="h-4 w-4" />
           ) : (
-            <Moon className="h-5 w-5" />
+            <Moon className="h-4 w-4" />
           )}
         </Button>
       </div>

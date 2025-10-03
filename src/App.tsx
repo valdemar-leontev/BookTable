@@ -18,7 +18,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <Router>
         <div className='h-screen flex flex-col'>
           <div className="grid grid-rows-[auto_1fr_auto] h-full">

@@ -158,9 +158,9 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                     variant="ghost"
                     size="icon"
                     onClick={onClose}
-                    className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-300 group"
+                    className="h-10 w-10 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 group !bg-background"
                   >
-                    <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1" />
+                    <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 text-primary" />
                   </Button>
 
                   <div className="flex items-center gap-2">
@@ -169,20 +169,20 @@ export const BookDetail = ({ book, isOpen, onClose, onAddToCart }: BookDetailPro
                       size="icon"
                       onClick={() => setIsLiked(!isLiked)}
                       className={cn(
-                        "h-10 w-10 rounded-xl transition-all duration-300",
+                        "h-10 w-10 rounded-xl transition-all duration-300 !bg-background",
                         isLiked
-                          ? "text-red-500 bg-red-500/10 hover:bg-red-500/20"
-                          : "hover:bg-primary/10 hover:text-primary"
+                          ? "text-destructive !bg-destructive/10 hover:bg-destructive/20"
+                          : "hover:bg-accent hover:text-accent-foreground"
                       )}
                     >
-                      <Heart className={cn("h-5 w-5", isLiked && "fill-current")} />
+                      <Heart className={cn("h-5 w-5", isLiked && "!fill-current")} />
                     </Button>
 
                     <Button
                       variant="ghost"
                       size="icon"
                       onClick={handleShare}
-                      className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all duration-300"
+                      className="h-10 w-10 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 !bg-background"
                     >
                       <Share2 className="h-5 w-5" />
                     </Button>

@@ -117,222 +117,7 @@ const mockBooks = [
       "https://legere.ru/wp-content/uploads/2022/09/oblozhka-1.jpg"
     ]
   },
-  {
-    id: 1,
-    title: "Любовь основа служения",
-    author: "Александр Строк",
-    series: "СЛУЖЕНИЕ",
-    image: "https://legere.ru/wp-content/uploads/2021/01/lyubov-osnova-sluzheniya-oblozhka.png",
-    category: "Служение",
-    year: 2023,
-    price: 450,
-    quantity: "1 шт",
-    tags: ["служение", "любовь", "церковь"],
-    description: "Эта книга раскрывает библейские принципы служения, основанные на любви и смирении. Автор подробно рассматривает как строить здоровые отношения в церковном служении и сохранять радость в служении другим.",
-    pages: 240,
-    rating: 4.5,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/01/lyubov-osnova-sluzheniya-oblozhka.png"
-    ]
-  },
-  {
-    id: 2,
-    title: "Неописуемый",
-    author: "Луи Гиглио",
-    series: "БОГОСЛОВИЕ",
-    image: "https://legere.ru/wp-content/uploads/2021/04/oblozhka-1-6.jpg",
-    category: "Богословие",
-    year: 2022,
-    price: 1600,
-    quantity: "1 шт",
-    tags: ["богословие", "созерцание", "величие Бога"],
-    description: "Глубокое исследование величия и славы Божьей. Книга помогает по-новому увидеть трансцендентность Бога и Его близость к человеку.",
-    pages: 320,
-    rating: 4.8,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/04/oblozhka-1-6.jpg"
-    ]
-  },
-  {
-    id: 7,
-    title: "Большая картина",
-    author: "Дэвид Хелм",
-    series: "ПРОПОВЕДЬ",
-    image: "https://legere.ru/wp-content/uploads/2023/11/BK-obl-1.jpg",
-    category: "Проповедь",
-    year: 2023,
-    price: 1350,
-    quantity: "1 шт",
-    tags: ["проповедь", "библия", "экзегетика"],
-    description: "Практическое руководство по библейской проповеди. Автор делится методами работы с текстом и построения проповедей, которые меняют жизни.",
-    pages: 280,
-    rating: 4.6,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2023/11/BK-obl-1.jpg"
-    ]
-  },
-  {
-    id: 8,
-    title: "Все женщины Библии",
-    author: "Юлия Газизуллина",
-    series: "ИССЛЕДОВАНИЯ",
-    image: "https://legere.ru/wp-content/uploads/2025/03/vse-zhen-obl-1.jpg",
-    category: "Исследования",
-    year: 2023,
-    price: 1600,
-    quantity: "1 шт",
-    tags: ["женщины", "библия", "исследование"],
-    description: "Уникальное исследование всех женских образов в Священном Писании. Книга раскрывает роль женщин в библейской истории и их значение для современности.",
-    pages: 380,
-    rating: 4.7,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2025/03/vse-zhen-obl-1.jpg"
-    ]
-  },
-  {
-    id: 16,
-    title: "В единстве с пастырем",
-    author: "Мэри Сомервиль",
-    series: "ЦЕРКОВЬ",
-    image: "https://legere.ru/wp-content/uploads/2021/11/oblozhka-1-10.jpg",
-    category: "Церковь",
-    year: 2022,
-    price: 370,
-    quantity: "1 шт",
-    tags: ["церковь", "пастырь", "единство"],
-    description: "Книга о важности единства в церковной общине и поддержке пастырского служения. Практические советы для здоровых отношений в церкви.",
-    pages: 190,
-    rating: 4.3,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/11/oblozhka-1-10.jpg"
-    ]
-  },
-  {
-    id: 17,
-    title: "Дарите им благодать",
-    author: "Элис М.",
-    series: "ВОСПИТАНИЕ",
-    image: "https://legere.ru/wp-content/uploads/2022/09/oblozhka-1.jpg",
-    category: "Воспитание",
-    year: 2023,
-    price: 800,
-    quantity: "1 шт",
-    tags: ["дети", "благодать", "воспитание"],
-    description: "Библейский подход к воспитанию детей через призму Божьей благодати. Книга помогает родителям воспитывать детей в любви и истине.",
-    pages: 260,
-    rating: 4.5,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2022/09/oblozhka-1.jpg"
-    ]
-  },
-  {
-    id: 1,
-    title: "Любовь основа служения",
-    author: "Александр Строк",
-    series: "СЛУЖЕНИЕ",
-    image: "https://legere.ru/wp-content/uploads/2021/01/lyubov-osnova-sluzheniya-oblozhka.png",
-    category: "Служение",
-    year: 2023,
-    price: 450,
-    quantity: "1 шт",
-    tags: ["служение", "любовь", "церковь"],
-    description: "Эта книга раскрывает библейские принципы служения, основанные на любви и смирении. Автор подробно рассматривает как строить здоровые отношения в церковном служении и сохранять радость в служении другим.",
-    pages: 240,
-    rating: 4.5,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/01/lyubov-osnova-sluzheniya-oblozhka.png"
-    ]
-  },
-  {
-    id: 2,
-    title: "Неописуемый",
-    author: "Луи Гиглио",
-    series: "БОГОСЛОВИЕ",
-    image: "https://legere.ru/wp-content/uploads/2021/04/oblozhka-1-6.jpg",
-    category: "Богословие",
-    year: 2022,
-    price: 1600,
-    quantity: "1 шт",
-    tags: ["богословие", "созерцание", "величие Бога"],
-    description: "Глубокое исследование величия и славы Божьей. Книга помогает по-новому увидеть трансцендентность Бога и Его близость к человеку.",
-    pages: 320,
-    rating: 4.8,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/04/oblozhka-1-6.jpg"
-    ]
-  },
-  {
-    id: 7,
-    title: "Большая картина",
-    author: "Дэвид Хелм",
-    series: "ПРОПОВЕДЬ",
-    image: "https://legere.ru/wp-content/uploads/2023/11/BK-obl-1.jpg",
-    category: "Проповедь",
-    year: 2023,
-    price: 1350,
-    quantity: "1 шт",
-    tags: ["проповедь", "библия", "экзегетика"],
-    description: "Практическое руководство по библейской проповеди. Автор делится методами работы с текстом и построения проповедей, которые меняют жизни.",
-    pages: 280,
-    rating: 4.6,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2023/11/BK-obl-1.jpg"
-    ]
-  },
-  {
-    id: 8,
-    title: "Все женщины Библии",
-    author: "Юлия Газизуллина",
-    series: "ИССЛЕДОВАНИЯ",
-    image: "https://legere.ru/wp-content/uploads/2025/03/vse-zhen-obl-1.jpg",
-    category: "Исследования",
-    year: 2023,
-    price: 1600,
-    quantity: "1 шт",
-    tags: ["женщины", "библия", "исследование"],
-    description: "Уникальное исследование всех женских образов в Священном Писании. Книга раскрывает роль женщин в библейской истории и их значение для современности.",
-    pages: 380,
-    rating: 4.7,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2025/03/vse-zhen-obl-1.jpg"
-    ]
-  },
-  {
-    id: 16,
-    title: "В единстве с пастырем",
-    author: "Мэри Сомервиль",
-    series: "ЦЕРКОВЬ",
-    image: "https://legere.ru/wp-content/uploads/2021/11/oblozhka-1-10.jpg",
-    category: "Церковь",
-    year: 2022,
-    price: 370,
-    quantity: "1 шт",
-    tags: ["церковь", "пастырь", "единство"],
-    description: "Книга о важности единства в церковной общине и поддержке пастырского служения. Практические советы для здоровых отношений в церкви.",
-    pages: 190,
-    rating: 4.3,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/11/oblozhka-1-10.jpg"
-    ]
-  },
-  {
-    id: 17,
-    title: "Дарите им благодать",
-    author: "Элис М.",
-    series: "ВОСПИТАНИЕ",
-    image: "https://legere.ru/wp-content/uploads/2022/09/oblozhka-1.jpg",
-    category: "Воспитание",
-    year: 2023,
-    price: 800,
-    quantity: "1 шт",
-    tags: ["дети", "благодать", "воспитание"],
-    description: "Библейский подход к воспитанию детей через призму Божьей благодати. Книга помогает родителям воспитывать детей в любви и истине.",
-    pages: 260,
-    rating: 4.5,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2022/09/oblozhka-1.jpg"
-    ]
-  }
+
 ]
 
 // Основной компонент каталога
@@ -450,8 +235,8 @@ export const Catalog = () => {
                   className={cn(
                     "h-8 w-8 flex items-center justify-center rounded",
                     viewMode === 'grid'
-                      ? "!bg-primary !text-primary-foreground"
-                      : "hover:bg-accent/50 !text-primary"
+                      ? "!text-background !bg-primary"
+                      : "!bg-background hover:bg-accent/50 !text-foreground"
                   )}
                 >
                   <Grid className="h-4 w-4" />
@@ -462,8 +247,8 @@ export const Catalog = () => {
                   className={cn(
                     "h-8 w-8 flex items-center justify-center rounded",
                     viewMode === 'list'
-                      ? "!bg-primary !text-primary-foreground"
-                      : "hover:bg-accent/50 !text-primary"
+                      ? "!text-background !bg-primary"
+                      : "!bg-background hover:bg-accent/50 !text-foreground"
                   )}
                 >
                   <List className="h-4 w-4" />
@@ -518,7 +303,7 @@ export const Catalog = () => {
             initial={{ opacity: 0, scale: 0.8, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="fixed right-4 bottom-30 z-50"
+            className="fixed right-4 bottom-25 z-50"
           >
             <Button
               onClick={scrollToTop}
