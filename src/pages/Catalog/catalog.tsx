@@ -1,4 +1,3 @@
-// pages/Catalog/Catalog.tsx
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { Loader2, Filter, Search, X } from 'lucide-react'
 import { motion } from 'framer-motion'

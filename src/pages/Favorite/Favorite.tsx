@@ -1,4 +1,3 @@
-// pages/Favorites/Favorites.tsx
 import { useState, useEffect } from 'react'
 import { Loader2, Heart } from 'lucide-react'
 import { motion } from 'framer-motion'
