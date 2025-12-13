@@ -3,8 +3,8 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { Cart } from '@/pages/Cart/cart'
 import { Home } from '@/pages/Home/home'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Favorites } from '@/pages/Favorite/Favorite'
-import { Catalog } from '@/pages/Catalog/Catalog'
+// import { Favorites } from '@/pages/Favorite/Favorite'
+// import Catalog from '../../pages/Catalog/Catalog'
 
 
 export const Content = () => {
@@ -67,7 +67,7 @@ export const Content = () => {
               transition={pageTransition}
               className="h-full w-full"
             >
-              <Favorites />
+              {/* <Favorites /> */}
             </motion.div>
           } />
 
@@ -80,7 +80,7 @@ export const Content = () => {
               transition={pageTransition}
               className="h-full w-full"
             >
-              <Catalog />
+              {/* <Catalog /> */}
             </motion.div>
           } />
 
