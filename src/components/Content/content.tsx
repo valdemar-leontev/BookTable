@@ -7,6 +7,7 @@ import { Catalog } from '../../pages/Catalog/catalog'
 import { Favorites } from '../../pages/Favorite/favorite'
 
 
+
 export const Content = () => {
   const location = useLocation()
 
