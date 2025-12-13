@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { BookItem } from '@/components/BookItem/BookItem'
 import type { Book } from '@/types/book'
 
-export const Favorites = () => {
+const Favorites = () => {
   // Состояние для книг и загрузки
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
@@ -172,3 +172,5 @@ export const Favorites = () => {
     </div>
   )
 }
+
+export default Favorites;
