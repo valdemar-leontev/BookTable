@@ -4,7 +4,7 @@
 // import { BookItem } from '@/components/BookItem/BookItem'
 // import type { Book } from '@/types/book'
 
-const Favorites = () => {
+const Favorites123 = () => {
   // Состояние для книг и загрузки
   // const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([])
   // const [loading, setLoading] = useState(true)
@@ -175,4 +175,4 @@ const Favorites = () => {
   return <>ffsf</>
 }
 
-export default Favorites;
+export default Favorites123;
