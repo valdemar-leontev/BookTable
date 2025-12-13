@@ -208,7 +208,7 @@ export const BookItem = ({
         {book.photos && book.photos.length > 0 ? (
           <>
             <img
-              src={book.photos[0]}
+              src={book.photos[0].url}
               alt={book.title}
               className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
@@ -331,7 +331,7 @@ export const BookItem = ({
                                 onClick={() => openFullscreen(index)}
                               >
                                 <img
-                                  src={image}
+                                  src={image.url}
                                   alt={`${book.title} ${index + 1}`}
                                   className="w-full h-full object-cover"
                                 />
@@ -380,7 +380,7 @@ export const BookItem = ({
                                 onClick={() => openFullscreen(index)}
                               >
                                 <img
-                                  src={image}
+                                  src={image.url}
                                   alt={`${book.title} ${index + 1}`}
                                   className="w-full h-full object-cover"
                                 />
@@ -558,7 +558,7 @@ export const BookItem = ({
             {/* Fullscreen Image */}
             <div className="w-full h-full flex items-center justify-center">
               <img
-                src={book.photos[fullscreenImageIndex]}
+                src={book.photos[fullscreenImageIndex].url}
                 alt={`${book.title} ${fullscreenImageIndex + 1}`}
                 className="max-w-full max-h-full object-contain cursor-zoom-out"
                 onClick={closeFullscreen}

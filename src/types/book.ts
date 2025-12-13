@@ -43,7 +43,7 @@ export interface Book {
   description: string
   price: number
   stocks: Stock[]
-  photos: string[]
+  photos: { id: number; url: string; }[]
   liked: boolean;
 }
 
