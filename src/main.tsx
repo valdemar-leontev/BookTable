@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App";
 import { init } from '@tma.js/sdk-react'
 import { retrieveRawInitData } from '@tma.js/bridge';
-import { useUserStore, type User } from './stores/UserStore';
+import { useUserStore, transformTelegramUser, type TelegramUser } from './stores/UserStore';
 
 try {
   init()
@@ -17,7 +17,7 @@ const Root = () => {
 
   useEffect(() => {
     (async () => {
-      let telegramUser: User | null = null;
+      let telegramUser: TelegramUser | null = null;
 
       try {
         const queryString = retrieveRawInitData();
@@ -27,9 +27,9 @@ const Root = () => {
           const decodedString = decodeURIComponent(queryString);
           const params = new URLSearchParams(decodedString);
           const userJson = params.get('user');
-          
+
           if (userJson) {
-            telegramUser = JSON.parse(decodeURIComponent(userJson)) as User;
+            telegramUser = JSON.parse(decodeURIComponent(userJson)) as TelegramUser;
             console.log('Telegram user:', telegramUser);
           }
         }
@@ -37,17 +37,24 @@ const Root = () => {
         console.error('Error parsing Telegram data:', error);
       }
 
-      // Используем тестовые данные если нет Telegram
-      // const userData = await apiClient.post<IDataUser>('users', {
-      //   userName: telegramUser?.username || 'test_username',
-      //   firstName: telegramUser?.first_name || 'Test',
-      //   lastName: telegramUser?.last_name || 'User',
-      //   telegramId: telegramUser?.id ? String(telegramUser.id) : '123456789',
-      //   phone: telegramUser?.phone_number || '+79991234567',
-      //   photoUrl: telegramUser?.photo_url || '',
-      // });
-
-      setUser(telegramUser);
+      if (telegramUser) {
+        // Преобразуем Telegram пользователя в ваш формат
+        const user = transformTelegramUser(telegramUser);
+        setUser(user);
+        console.log('Transformed user:', user);
+      } else {
+        // Тестовый пользователь если нет Telegram
+        const testUser = {
+          id: 'test-123',
+          userName: 'test_username',
+          firstName: 'Test',
+          lastName: 'User',
+          telegramId: '123456789',
+          phone: '+79991234567',
+          photoUrl: '',
+        };
+        setUser(testUser);
+      }
     })();
   }, [setUser]);
 

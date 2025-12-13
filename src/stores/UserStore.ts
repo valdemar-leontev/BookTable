@@ -1,7 +1,20 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
-// Тип пользователя
+// Тип для данных от Telegram (snake_case)
+export interface TelegramUser {
+  id: number;
+  first_name: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+  phone_number?: string;
+  allows_write_to_pm?: boolean;
+  is_premium?: boolean;
+  language_code?: string;
+}
+
+// Тип пользователя в вашем приложении (camelCase)
 export interface User {
   id: string;
   userName: string;
@@ -10,6 +23,8 @@ export interface User {
   telegramId: string;
   phone?: string;
   photoUrl?: string;
+  isPremium?: boolean;
+  languageCode?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -26,6 +41,21 @@ interface UserStore {
   setLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
 }
+
+// Функция для преобразования Telegram пользователя в ваш формат
+export const transformTelegramUser = (tgUser: TelegramUser): User => {
+  return {
+    id: `tg-${tgUser.id}`,
+    userName: tgUser.username || '',
+    firstName: tgUser.first_name,
+    lastName: tgUser.last_name,
+    telegramId: String(tgUser.id),
+    phone: tgUser.phone_number,
+    photoUrl: tgUser.photo_url,
+    isPremium: tgUser.is_premium,
+    languageCode: tgUser.language_code,
+  };
+};
 
 export const useUserStore = create<UserStore>()(
   persist(
@@ -48,9 +78,7 @@ export const useUserStore = create<UserStore>()(
       setError: (error) => set({ error }),
     }),
     {
-      name: 'user-storage', // имя для localStorage
-      // Можно исключить некоторые поля из сохранения
-      // partialize: (state) => ({ user: state.user }),
+      name: 'user-storage',
     }
   )
 );

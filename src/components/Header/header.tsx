@@ -15,6 +15,7 @@ export function Header() {
   // Получаем короткое имя
   const getShortName = () => {
     if (!user) return "Гость"
+    // Теперь корректно обращаемся к firstName
     return user.firstName || user.userName || "Пользователь"
   }
 
@@ -36,10 +37,10 @@ export function Header() {
 
         <div className="flex items-center gap-4">
           {/* Индикатор пользователя */}
-          <div className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 ${theme === "light" 
-            ? "bg-amber-50 text-amber-700 border border-amber-100" 
+          <div className={`px-3 py-1.5 rounded-full text-sm transition-all duration-200 ${theme === "light"
+            ? "bg-amber-50 text-amber-700 border border-amber-100"
             : "bg-blue-900/20 text-blue-300 border border-blue-800/30"
-          }`}>
+            }`}>
             {getShortName()}
           </div>
 
@@ -49,8 +50,8 @@ export function Header() {
             size="icon"
             onClick={toggleTheme}
             className={`h-9 w-9 rounded-full transition-all duration-300 hover:scale-105 ${theme === "light"
-                ? "!bg-amber-100 text-amber-600 hover:bg-amber-200"
-                : "!bg-blue-900/30 text-blue-300 hover:bg-blue-900/50"
+              ? "!bg-amber-100 text-amber-600 hover:bg-amber-200"
+              : "!bg-blue-900/30 text-blue-300 hover:bg-blue-900/50"
               }`}
           >
             {theme === "light" ? (
