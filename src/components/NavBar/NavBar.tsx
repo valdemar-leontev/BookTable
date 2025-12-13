@@ -1,9 +1,9 @@
-import { Home, Search, BookOpen, ShoppingCart } from 'lucide-react'
+import { Home, Heart, BookOpen } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useEffect, useRef, useState } from 'react'
 
-type NavItem = 'home' | 'search' | 'catalog' | 'cart'
+type NavItem = 'home' | 'favorite' | 'catalog' | 'cart'
 
 export const NavBar = () => {
   const location = useLocation()
@@ -13,9 +13,9 @@ export const NavBar = () => {
 
   const navItems = [
     { id: 'home' as NavItem, icon: Home, label: 'Главная', path: '/' },
-    { id: 'search' as NavItem, icon: Search, label: 'Поиск', path: '/search' },
     { id: 'catalog' as NavItem, icon: BookOpen, label: 'Каталог', path: '/catalog' },
-    { id: 'cart' as NavItem, icon: ShoppingCart, label: 'Корзина', path: '/cart' },
+    { id: 'favorite' as NavItem, icon: Heart, label: 'Избранное', path: '/favorites' },
+    // { id: 'cart' as NavItem, icon: ShoppingCart, label: 'Корзина', path: '/cart' },
   ]
 
   const isActive = (path: string) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path))
@@ -46,7 +46,7 @@ export const NavBar = () => {
   }
 
   return (
-    <nav className="px-4 py-3 safe-area-bottom">
+    <nav className="px-5 py-3 safe-area-bottom">
       <div className="flex justify-between items-center max-w-md mx-auto bg-background rounded-2xl shadow-sm border p-1 relative">
         {/* Анимированный индикатор */}
         <div

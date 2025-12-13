@@ -1,10 +1,10 @@
 // components/Content/content.tsx
 import { Routes, Route, useLocation } from 'react-router-dom'
 import { Cart } from '@/pages/Cart/cart'
-import { Catalog } from '@/pages/Catalog/catalog'
 import { Home } from '@/pages/Home/home'
-import { Search } from '@/pages/Search/search'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Catalog } from '@/pages/Catalog/Catalog'
+import { Favorites } from '@/pages/Favorite/Favorite'
 
 
 export const Content = () => {
@@ -58,7 +58,7 @@ export const Content = () => {
             </motion.div>
           } />
 
-          <Route path="/search" element={
+          <Route path="/favorites" element={
             <motion.div
               initial="initial"
               animate="in"
@@ -67,7 +67,7 @@ export const Content = () => {
               transition={pageTransition}
               className="h-full w-full"
             >
-              <Search />
+              <Favorites />
             </motion.div>
           } />
 

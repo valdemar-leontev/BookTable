@@ -1,562 +1,539 @@
-import { useState, useEffect, useRef } from 'react'
-import { Search, Grid, List, Filter, ShoppingCart, ImageIcon, X, ArrowUp } from 'lucide-react'
+// pages/Catalog/Catalog.tsx
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { Loader2, Filter, Search, X } from 'lucide-react'
+import { motion } from 'framer-motion'
+import { BookItem } from '@/components/BookItem/BookItem'
+import { Filters } from '@/components/Filters/Filters'
+import type { Book, Genre } from '@/types/book'
 
-import { Slider } from "@/components/ui/slider"
-import { cn } from '@/lib/utils'
-import { motion, AnimatePresence } from 'framer-motion'
-import { BookDetail } from './BookDetail/bookDetail'
-import { Button } from '@/components/ui/button'
+interface BooksResponse {
+  content: Book[]
+  currentPage: number
+  totalPages: number
+  hasNext: boolean
+  hasPrevious: boolean
+}
 
-// Mock данные для христианских книг с полной информацией
-const mockBooks = [
-  {
-    id: 1,
-    title: "Любовь основа служения",
-    author: "Александр Строк",
-    series: "СЛУЖЕНИЕ",
-    image: "https://legere.ru/wp-content/uploads/2021/01/lyubov-osnova-sluzheniya-oblozhka.png",
-    category: "Служение",
-    year: 2023,
-    price: 450,
-    quantity: "1 шт",
-    tags: ["служение", "любовь", "церковь"],
-    description: "Эта книга раскрывает библейские принципы служения, основанные на любви и смирении. Автор подробно рассматривает как строить здоровые отношения в церковном служении и сохранять радость в служении другим.",
-    pages: 240,
-    rating: 4.5,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/01/lyubov-osnova-sluzheniya-oblozhka.png"
-    ]
-  },
-  {
-    id: 2,
-    title: "Неописуемый",
-    author: "Луи Гиглио",
-    series: "БОГОСЛОВИЕ",
-    image: "https://legere.ru/wp-content/uploads/2021/04/oblozhka-1-6.jpg",
-    category: "Богословие",
-    year: 2022,
-    price: 1600,
-    quantity: "1 шт",
-    tags: ["богословие", "созерцание", "величие Бога"],
-    description: "Глубокое исследование величия и славы Божьей. Книга помогает по-новому увидеть трансцендентность Бога и Его близость к человеку.",
-    pages: 320,
-    rating: 4.8,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/04/oblozhka-1-6.jpg"
-    ]
-  },
-  {
-    id: 7,
-    title: "Большая картина",
-    author: "Дэвид Хелм",
-    series: "ПРОПОВЕДЬ",
-    image: "https://legere.ru/wp-content/uploads/2023/11/BK-obl-1.jpg",
-    category: "Проповедь",
-    year: 2023,
-    price: 1350,
-    quantity: "1 шт",
-    tags: ["проповедь", "библия", "экзегетика"],
-    description: "Практическое руководство по библейской проповеди. Автор делится методами работы с текстом и построения проповедей, которые меняют жизни.",
-    pages: 280,
-    rating: 4.6,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2023/11/BK-obl-1.jpg"
-    ]
-  },
-  {
-    id: 8,
-    title: "Все женщины Библии",
-    author: "Юлия Газизуллина",
-    series: "ИССЛЕДОВАНИЯ",
-    image: "https://legere.ru/wp-content/uploads/2025/03/vse-zhen-obl-1.jpg",
-    category: "Исследования",
-    year: 2023,
-    price: 1600,
-    quantity: "1 шт",
-    tags: ["женщины", "библия", "исследование"],
-    description: "Уникальное исследование всех женских образов в Священном Писании. Книга раскрывает роль женщин в библейской истории и их значение для современности.",
-    pages: 380,
-    rating: 4.7,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2025/03/vse-zhen-obl-1.jpg"
-    ]
-  },
-  {
-    id: 16,
-    title: "В единстве с пастырем",
-    author: "Мэри Сомервиль",
-    series: "ЦЕРКОВЬ",
-    image: "https://legere.ru/wp-content/uploads/2021/11/oblozhka-1-10.jpg",
-    category: "Церковь",
-    year: 2022,
-    price: 370,
-    quantity: "1 шт",
-    tags: ["церковь", "пастырь", "единство"],
-    description: "Книга о важности единства в церковной общине и поддержке пастырского служения. Практические советы для здоровых отношений в церкви.",
-    pages: 190,
-    rating: 4.3,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2021/11/oblozhka-1-10.jpg"
-    ]
-  },
-  {
-    id: 17,
-    title: "Дарите им благодать",
-    author: "Элис М.",
-    series: "ВОСПИТАНИЕ",
-    image: "https://legere.ru/wp-content/uploads/2022/09/oblozhka-1.jpg",
-    category: "Воспитание",
-    year: 2023,
-    price: 800,
-    quantity: "1 шт",
-    tags: ["дети", "благодать", "воспитание"],
-    description: "Библейский подход к воспитанию детей через призму Божьей благодати. Книга помогает родителям воспитывать детей в любви и истине.",
-    pages: 260,
-    rating: 4.5,
-    additionalImages: [
-      "https://legere.ru/wp-content/uploads/2022/09/oblozhka-1.jpg"
-    ]
-  },
+interface FilterValues {
+  minPrice: number
+  maxPrice: number
+  minYear: number
+  maxYear: number
+}
 
-]
-
-// Основной компонент каталога
 export const Catalog = () => {
-  const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState('all')
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
-  const [sortBy, setSortBy] = useState<'title' | 'year' | 'price'>('title')
+  // Состояние для книг и загрузки
+  const [books, setBooks] = useState<Book[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loadingMore, setLoadingMore] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  // Пагинация
+  const [page, setPage] = useState(0)
+  const [hasMore, setHasMore] = useState(true)
+
+  // Фильтры
   const [showFilters, setShowFilters] = useState(false)
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 2000])
-  const [selectedBook, setSelectedBook] = useState<any>(null)
-  const [isHeaderCollapsed, setIsHeaderCollapsed] = useState(false)
-  const [showScrollTop, setShowScrollTop] = useState(false)
-  const contentRef = useRef<HTMLDivElement>(null)
-  const lastScrollTop = useRef(0)
+  const [activeFilters, setActiveFilters] = useState<any>({})
+  const [genres, setGenres] = useState<Genre[]>([])
+  const [filterValues, setFilterValues] = useState<FilterValues>({
+    minPrice: 0,
+    maxPrice: 5000,
+    minYear: 1900,
+    maxYear: new Date().getFullYear()
+  })
 
-  // ФИКС: Упрощенный скролл без резких прыжков
+  // Поиск
+  const [searchQuery, setSearchQuery] = useState('')
+  const [searchInputValue, setSearchInputValue] = useState('')
+
+  // ID пользователя (временно используем 1)
+  const [userId] = useState<number>(1)
+
+  // Состояние для избранных книг
+  const [favoriteBooks, setFavoriteBooks] = useState<Set<number>>(new Set())
+
+  // Реф для debounce таймера
+  const searchDebounceRef = useRef<any | null>(null)
+
+  // Загрузка начальных данных
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = contentRef.current?.scrollTop || 0
+    const loadInitialData = async () => {
+      try {
+        setLoading(true)
 
-      // Плавное определение состояния хедера
-      if (scrollTop > 100 && scrollTop > lastScrollTop.current) {
-        setIsHeaderCollapsed(true)
-      } else if (scrollTop < 50 || scrollTop < lastScrollTop.current) {
-        setIsHeaderCollapsed(false)
+        // Загружаем жанры
+        const genresResponse = await fetch('http://localhost:8080/books/genres')
+        if (genresResponse.ok) {
+          const genresData = await genresResponse.json()
+          setGenres(genresData)
+        }
+
+        // Загружаем значения фильтров
+        const valuesResponse = await fetch('http://localhost:8080/books/filter-values')
+        if (valuesResponse.ok) {
+          const valuesData = await valuesResponse.json()
+          setFilterValues(valuesData)
+        }
+
+        // Загружаем первые книги
+        await fetchBooks(0, false, {})
+
+      } catch (err) {
+        console.error('Ошибка загрузки данных:', err)
+        setError('Не удалось загрузить данные')
+      } finally {
+        setLoading(false)
       }
-
-      // Стрелка "наверх"
-      setShowScrollTop(scrollTop > 300)
-      lastScrollTop.current = scrollTop
     }
 
-    const contentElement = contentRef.current
-    if (contentElement) {
-      contentElement.addEventListener('scroll', handleScroll, { passive: true })
-      return () => contentElement.removeEventListener('scroll', handleScroll)
+    loadInitialData()
+  }, [])
+
+  // Функция загрузки избранных книг пользователя
+  const loadUserFavorites = useCallback(async () => {
+    try {
+      const response = await fetch(`http://localhost:8080/api/favorites/users/${userId}`)
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const favorites: Book[] = await response.json()
+
+      // Создаем Set из ID избранных книг для быстрого поиска
+      const favoriteIds = new Set(favorites.map(book => book.id))
+      setFavoriteBooks(favoriteIds)
+
+    } catch (err) {
+      console.error('Ошибка загрузки избранных книг:', err)
+      // Не показываем ошибку пользователю, так как это не критично
+    }
+  }, [userId])
+
+  // Функция загрузки книг с фильтрами
+  const fetchBooks = useCallback(async (pageNum: number, isLoadMore: boolean = false, filters: any = {}) => {
+    try {
+      if (isLoadMore) {
+        setLoadingMore(true)
+      } else {
+        setLoading(true)
+      }
+
+      // Добавляем поиск к фильтрам если есть
+      const finalFilters = { ...filters }
+      if (searchQuery.trim()) {
+        finalFilters.search = searchQuery.trim()
+      }
+
+      // Добавляем userId к запросу, чтобы бэкенд мог вернуть поле liked
+      const response = await fetch(`http://localhost:8080/books/filter?page=${pageNum}&size=5&userId=${userId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(finalFilters)
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const data: BooksResponse = await response.json()
+      console.log('Получены книги:', data)
+
+      // Обновляем книги
+      if (isLoadMore) {
+        setBooks(prev => [...prev, ...data.content])
+      } else {
+        setBooks(data.content)
+      }
+
+      setHasMore(data.hasNext)
+      setPage(data.currentPage)
+      setError(null)
+
+    } catch (err) {
+      console.error('Ошибка загрузки книг:', err)
+      if (!isLoadMore) {
+        setError('Не удалось загрузить каталог книг')
+      }
+    } finally {
+      setLoading(false)
+      setLoadingMore(false)
+    }
+  }, [searchQuery, userId])
+
+  // Загружаем избранные книги при первом рендере
+  useEffect(() => {
+    loadUserFavorites()
+  }, [loadUserFavorites])
+
+  // Обработчик изменения поля поиска с debounce
+  const handleSearchInputChange = useCallback((value: string) => {
+    setSearchInputValue(value)
+
+    // Очищаем предыдущий таймер
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current)
+    }
+
+    // Устанавливаем новый таймер на 3 секунды
+    searchDebounceRef.current = setTimeout(() => {
+      setSearchQuery(value)
+    }, 3000)
+  }, [])
+
+  // Применение поиска (вручную через Enter или кнопку)
+  const handleSearch = useCallback(async () => {
+    // Очищаем таймер, если он есть
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current)
+    }
+
+    // Применяем поиск немедленно
+    setSearchQuery(searchInputValue)
+  }, [searchInputValue])
+
+  // Очистка поиска
+  const handleClearSearch = async () => {
+    // Очищаем таймер
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current)
+    }
+
+    setSearchInputValue('')
+    setSearchQuery('')
+  }
+
+  // Применение фильтров
+  const handleApplyFilters = async (filters: any) => {
+    setActiveFilters(filters)
+    await fetchBooks(0, false, filters)
+  }
+
+  // Загрузка больше книг
+  const handleLoadMore = async () => {
+    if (!loadingMore && hasMore) {
+      await fetchBooks(page + 1, true, activeFilters)
+    }
+  }
+
+  // Обработчик добавления/удаления из избранного
+  const handleFavoriteToggle = async (bookId: number, isCurrentlyFavorite: boolean) => {
+    try {
+      if (isCurrentlyFavorite) {
+        // Удаляем из избранного
+        const response = await fetch(
+          `http://localhost:8080/api/favorites/users/${userId}/books/${bookId}`,
+          {
+            method: 'DELETE',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        // Обновляем локальное состояние
+        setFavoriteBooks(prev => {
+          const newSet = new Set(prev)
+          newSet.delete(bookId)
+          return newSet
+        })
+      } else {
+        // Добавляем в избранное
+        const response = await fetch(
+          `http://localhost:8080/api/favorites/users/${userId}/books/${bookId}`,
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          }
+        )
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        // Обновляем локальное состояние
+        setFavoriteBooks(prev => {
+          const newSet = new Set(prev)
+          newSet.add(bookId)
+          return newSet
+        })
+      }
+    } catch (err) {
+      console.error('Ошибка при изменении избранного:', err)
+      throw err
+    }
+  }
+
+  // Очищаем таймер при размонтировании
+  useEffect(() => {
+    return () => {
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current)
+      }
     }
   }, [])
 
-  const scrollToTop = () => {
-    contentRef.current?.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
+  // Автоматически выполняем поиск при изменении searchQuery
+  useEffect(() => {
+    const applySearch = async () => {
+      await fetchBooks(0, false, activeFilters)
+    }
+
+    if (searchQuery !== undefined) {
+      applySearch()
+    }
+  }, [searchQuery, fetchBooks, activeFilters])
+
+  if (loading && books.length === 0) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
+          <p className="text-muted-foreground">Загрузка каталога...</p>
+        </div>
+      </div>
+    )
   }
 
-  // Фильтрация и сортировка
-  const filteredBooks = mockBooks.filter(book => {
-    const matchesSearch = book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.author.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.series.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      book.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-    const matchesCategory = selectedCategory === 'all' || book.category === selectedCategory
-    const matchesPrice = book.price >= priceRange[0] && book.price <= priceRange[1]
-    return matchesSearch && matchesCategory && matchesPrice
-  })
-
-  const sortedBooks = [...filteredBooks].sort((a, b) => {
-    if (sortBy === 'title') return a.title.localeCompare(b.title)
-    if (sortBy === 'year') return b.year - a.year
-    if (sortBy === 'price') return a.price - b.price
-    return 0
-  })
-
-  const categories = ['all', ...new Set(mockBooks.map(book => book.category))]
-  const maxPrice = Math.max(...mockBooks.map(book => book.price))
-
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('ru-RU').format(price)
-  }
-
-  const handleAddToCart = (book: any) => {
-    console.log('Добавлено в корзину:', book.title)
+  if (error && books.length === 0) {
+    return (
+      <div className="h-full flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive text-lg mb-2">Ошибка</p>
+          <p className="text-muted-foreground">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
+          >
+            Обновить
+          </button>
+        </div>
+      </div>
+    )
   }
 
   return (
     <div className="h-full flex flex-col">
-      {/* ФИКС: Упрощенный хедер без сложных анимаций */}
-      <div className={cn(
-        "sticky top-0 z-40 bg-background/95 backdrop-blur-sm border-b border-border/50",
-        isHeaderCollapsed && "shadow-sm"
-      )}>
-        <div className="px-4">
-          {/* Первая строка */}
-          <div className="flex items-center justify-between py-3">
-            <h1 className={cn(
-              "font-serif font-light",
-              isHeaderCollapsed ? "text-xl" : "text-3xl"
-            )}>
-              Каталог
-            </h1>
+      {/* Header */}
+      <div className="bg-background border-b border-border shrink-0">
+        <div className="container mx-auto px-4">
+          {/* Compact Header Row */}
+          <div className="flex flex-col justify-between py-4 gap-2">
+            {/* Заголовок и счетчик */}
+            <div className="flex items-center gap-4">
+              <h1 className="text-2xl font-bold">Каталог книг</h1>
+              <div className="hidden sm:flex items-center gap-2">
+                <span className="text-sm text-muted-foreground">
+                  {books.length} {books.length === 1 ? 'книга' : books.length < 5 ? 'книги' : 'книг'}
+                </span>
+              </div>
+            </div>
 
+            {/* Управляющие элементы */}
             <div className="flex items-center gap-2">
-              {/* Кнопка фильтров */}
-              <motion.button
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setShowFilters(!showFilters)}
+              {/* Поиск */}
+              <motion.div
+                animate={{ width: 250 }}
+                transition={{ duration: 0.3 }}
+                className="relative"
+              >
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Поиск книг..."
+                    value={searchInputValue}
+                    onChange={(e) => handleSearchInputChange(e.target.value)}
+                    onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+                    className="w-full pl-10 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background text-sm"
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  {searchInputValue && (
+                    <>
+                      <button
+                        onClick={handleClearSearch}
+                        className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                      {/* Индикатор debounce */}
+                      <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-border overflow-hidden">
+                        <div className="h-full bg-primary animate-pulse"></div>
+                      </div>
+                    </>
+                  )}
+                  <button
+                    onClick={handleSearch}
+                    className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
+                  >
+                    <Search className="h-4 w-4" />
+                  </button>
+                </div>
+              </motion.div>
+
+              {/* Фильтры */}
+              <button
+                onClick={() => setShowFilters(true)}
                 className={cn(
-                  "flex items-center gap-2 px-3 py-2 rounded-lg border text-sm",
-                  showFilters
-                    ? "!bg-primary !text-primary-foreground !border-primary"
-                    : "!bg-background border-border"
+                  "h-10 px-3.5 rounded-lg border flex items-center gap-2 transition-all",
+                  Object.keys(activeFilters).length > 0
+                    ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
+                    : "border-border bg-background hover:bg-muted"
                 )}
               >
                 <Filter className="h-4 w-4" />
-                {!isHeaderCollapsed && <span>Фильтры</span>}
-              </motion.button>
-
-              {/* Переключение вида */}
-              <div className="flex !bg-background border border-border rounded-lg p-1 !text-background">
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setViewMode('grid')}
-                  className={cn(
-                    "h-8 w-8 flex items-center justify-center rounded",
-                    viewMode === 'grid'
-                      ? "!text-background !bg-primary"
-                      : "!bg-background hover:bg-accent/50 !text-foreground"
-                  )}
-                >
-                  <Grid className="h-4 w-4" />
-                </motion.button>
-                <motion.button
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setViewMode('list')}
-                  className={cn(
-                    "h-8 w-8 flex items-center justify-center rounded",
-                    viewMode === 'list'
-                      ? "!text-background !bg-primary"
-                      : "!bg-background hover:bg-accent/50 !text-foreground"
-                  )}
-                >
-                  <List className="h-4 w-4" />
-                </motion.button>
-              </div>
+                <span className="text-sm font-medium hidden sm:inline">Фильтры</span>
+              </button>
             </div>
           </div>
 
-          {/* Поиск и категории */}
-          {!isHeaderCollapsed && (
-            <div>
-              {/* Поисковая строка */}
-              <div className="relative mb-3">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-                <input
-                  type="text"
-                  placeholder="Поиск книг, авторов..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 bg-background border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
-                />
+          {/* Активные фильтры */}
+          {Object.keys(activeFilters).length > 0 && (
+            <div className="flex items-center justify-between pb-3">
+              <div className="flex flex-wrap gap-2">
+                {activeFilters.genreIds && (
+                  <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-full flex items-center gap-1.5">
+                    <span>Жанры</span>
+                    <span className="bg-primary/20 px-1.5 py-0.5 rounded-full text-xs">
+                      {activeFilters.genreIds.length}
+                    </span>
+                  </span>
+                )}
+                {(activeFilters.minPrice || activeFilters.maxPrice) && (
+                  <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                    Цена: {activeFilters.minPrice || filterValues.minPrice}₽ – {activeFilters.maxPrice || filterValues.maxPrice}₽
+                  </span>
+                )}
+                {(activeFilters.minYear || activeFilters.maxYear) && (
+                  <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                    Год: {activeFilters.minYear || filterValues.minYear}–{activeFilters.maxYear || filterValues.maxYear}
+                  </span>
+                )}
+                {activeFilters.inStockOnly && (
+                  <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-full">
+                    В наличии
+                  </span>
+                )}
+                {searchQuery && (
+                  <span className="px-2.5 py-1 bg-primary/10 text-primary text-xs rounded-full flex items-center gap-1.5">
+                    <Search className="h-3 w-3" />
+                    {searchQuery}
+                  </span>
+                )}
               </div>
+              <button
+                onClick={() => {
+                  handleApplyFilters({})
+                  handleClearSearch()
+                }}
+                className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 hover:bg-muted rounded transition-colors whitespace-nowrap"
+              >
+                Очистить все
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
 
-              {/* Категории для десктопа */}
-              <div className="hidden lg:flex gap-2 flex-wrap mb-3">
-                {categories.map((category) => (
-                  <motion.button
-                    key={category}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setSelectedCategory(category)}
-                    className={cn(
-                      "px-3 py-1.5 rounded-lg text-sm border",
-                      selectedCategory === category
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-background border-border"
-                    )}
+      {/* Main Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="container mx-auto px-4 py-6">
+          {books.length === 0 ? (
+            <div className="text-center py-16">
+              <div className="max-w-sm mx-auto">
+                <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-muted flex items-center justify-center">
+                  <Search className="h-8 w-8 text-muted-foreground" />
+                </div>
+                <p className="text-muted-foreground text-lg mb-3">Книги не найдены</p>
+                <p className="text-sm text-muted-foreground mb-6">
+                  Попробуйте изменить параметры поиска или фильтры
+                </p>
+                <button
+                  onClick={() => setShowFilters(true)}
+                  className="px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm font-medium"
+                >
+                  Открыть фильтры
+                </button>
+              </div>
+            </div>
+          ) : (
+            <>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                {books.map((book, index) => (
+                  <motion.div
+                    key={`${book.id}-${index}`}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.05 }}
                   >
-                    {category === 'all' ? 'Все' : category}
-                  </motion.button>
+                    <BookItem
+                      book={book}
+                      onFavoriteToggle={handleFavoriteToggle}
+                      isInitiallyFavorite={favoriteBooks.has(book.id)}
+                      userId={userId}
+                    />
+                  </motion.div>
                 ))}
               </div>
-            </div>
-          )}
-        </div>
-      </div>
 
-      {/* ФИКС: Стрелка "наверх" с правильным z-index для iOS */}
-      <AnimatePresence>
-        {showScrollTop && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, y: 20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: 20 }}
-            className="fixed right-4 bottom-25 z-50"
-          >
-            <Button
-              onClick={scrollToTop}
-              size="icon"
-              className="w-12 h-12 rounded-full shadow-lg !bg-primary hover:bg-primary/90"
-            >
-              <ArrowUp className="h-5 w-5" />
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ВЫДВИЖНЫЕ ФИЛЬТРЫ (рабочие) */}
-      <AnimatePresence>
-        {showFilters && (
-          <>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowFilters(false)}
-              className="fixed inset-0 bg-background/80 backdrop-blur-sm z-30 lg:hidden"
-            />
-            <motion.div
-              initial={{ x: '100%' }}
-              animate={{ x: 0 }}
-              exit={{ x: '100%' }}
-              transition={{ type: "spring", damping: 25, stiffness: 300 }}
-              className="fixed top-0 right-0 bottom-0 w-80 bg-background border-l border-border z-40 overflow-y-auto lg:hidden"
-            >
-              <div className="p-4">
-                <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-semibold">Фильтры</h2>
-                  <motion.button
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowFilters(false)}
-                    className="h-8 w-8 flex items-center justify-center !bg-muted rounded"
+              {/* Load More Button */}
+              {hasMore && (
+                <div className="flex justify-center mt-8">
+                  <button
+                    onClick={handleLoadMore}
+                    disabled={loadingMore}
+                    className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
                   >
-                    <X className="h-4 w-4" />
-                  </motion.button>
-                </div>
-
-                <div className="space-y-3 mb-6">
-                  <h3 className="font-medium">Сортировка</h3>
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value as any)}
-                    className="w-full bg-background border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                  >
-                    <option value="title">По названию</option>
-                    <option value="year">По году</option>
-                    <option value="price">По цене</option>
-                  </select>
-                </div>
-
-                <div className="space-y-3 mb-6">
-                  <h3 className="font-medium">Категории</h3>
-                  <div className="space-y-2">
-                    {categories.map((category) => (
-                      <motion.button
-                        key={category}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() => setSelectedCategory(category)}
-                        className={cn(
-                          "w-full text-left px-3 py-2 rounded-lg",
-                          selectedCategory === category
-                            ? "!bg-primary text-primary-foreground"
-                            : "!bg-muted/50 hover:bg-muted"
-                        )}
-                      >
-                        {category === 'all' ? 'Все категории' : category}
-                      </motion.button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <h3 className="font-medium">Цена</h3>
-                  <div className="space-y-4">
-                    <Slider
-                      value={[priceRange[0], priceRange[1]]}
-                      min={0}
-                      max={maxPrice}
-                      step={50}
-                      onValueChange={(value) => setPriceRange([value[0], value[1]])}
-                    />
-                    <div className="flex items-center justify-between text-sm">
-                      <span>{formatPrice(priceRange[0])}₽</span>
-                      <span>{formatPrice(priceRange[1])}₽</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
-
-      {/* Основной контент */}
-      <div
-        ref={contentRef}
-        className="flex-1 overflow-auto"
-        style={{
-          // ФИКС: Предотвращаем дергание на iOS
-          WebkitOverflowScrolling: 'touch',
-        }}
-      >
-        <div className="max-w-6xl mx-auto p-4">
-          {/* Десктопные фильтры для компактного состояния */}
-          {isHeaderCollapsed && (
-            <div className="hidden lg:block mb-6">
-              <div className="flex items-center gap-4">
-                <div className="flex-1 flex gap-2 flex-wrap">
-                  {categories.map((category) => (
-                    <motion.button
-                      key={category}
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      onClick={() => setSelectedCategory(category)}
-                      className={cn(
-                        "px-3 py-1.5 rounded-lg text-sm border",
-                        selectedCategory === category
-                          ? "bg-primary text-primary-foreground border-primary"
-                          : "bg-background border-border"
-                      )}
-                    >
-                      {category === 'all' ? 'Все' : category}
-                    </motion.button>
-                  ))}
-                </div>
-                <select
-                  value={sortBy}
-                  onChange={(e) => setSortBy(e.target.value as any)}
-                  className="bg-background border border-border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/50"
-                >
-                  <option value="title">По названию</option>
-                  <option value="year">По году</option>
-                  <option value="price">По цене</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          {/* Результаты - ФИКС: Упрощенные анимации без scale */}
-          <div className={cn(
-            "grid gap-4",
-            viewMode === 'grid' ? "grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" : "grid-cols-1"
-          )}>
-            <AnimatePresence mode="popLayout">
-              {sortedBooks.map((book) => (
-                <motion.div
-                  key={book.id}
-                  layout
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  whileHover={{ y: -2 }}
-                  onClick={() => setSelectedBook(book)}
-                  className={cn(
-                    "cursor-pointer bg-background border border-border rounded-lg p-3 flex flex-col",
-                    viewMode === 'list' && "flex-row gap-4 items-start"
-                  )}
-                >
-                  {/* ФИКС: Обложка книги без анимаций */}
-                  <div className={cn(
-                    "bg-gradient-to-br from-primary/5 to-muted/20 rounded-lg overflow-hidden flex-shrink-0 mb-3 border border-border/30",
-                    viewMode === 'grid' ? "aspect-[3/4] w-full" : "w-20 aspect-[3/4]"
-                  )}>
-                    {book.image ? (
-                      <img
-                        src={book.image}
-                        alt={book.title}
-                        className="w-full h-full object-cover"
-                        // ФИКС: Предотвращаем дергание на iOS
-                        style={{
-                          transform: 'translateZ(0)',
-                          backfaceVisibility: 'hidden'
-                        }}
-                      />
+                    {loadingMore ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Загрузка...
+                      </>
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-muted/30">
-                        <ImageIcon className="h-6 w-6 text-muted-foreground" />
-                      </div>
+                      'Загрузить еще'
                     )}
+                  </button>
+                </div>
+              )}
+
+              {/* End of List */}
+              {!hasMore && books.length > 0 && (
+                <div className="text-center py-8">
+                  <div className="inline-flex items-center gap-2 text-sm text-muted-foreground">
+                    <div className="w-2 h-2 rounded-full bg-muted-foreground"></div>
+                    Вы просмотрели все книги
+                    <div className="w-2 h-2 rounded-full bg-muted-foreground"></div>
                   </div>
-
-                  {/* Информация о книге */}
-                  <div className={cn(
-                    "flex-1 min-w-0 flex flex-col",
-                    viewMode === 'grid' ? "gap-1" : "gap-2"
-                  )}>
-                    <h3 className={cn(
-                      "font-medium leading-tight line-clamp-2",
-                      viewMode === 'grid' ? "text-sm" : "text-base"
-                    )}>
-                      {book.title}
-                    </h3>
-
-                    <p className={cn(
-                      "text-muted-foreground",
-                      viewMode === 'grid' ? "text-xs" : "text-sm"
-                    )}>
-                      {book.author}
-                    </p>
-
-                    <div className="flex items-center justify-between mt-auto pt-2">
-                      <div className="text-lg font-bold text-primary">
-                        {formatPrice(book.price)}₽
-                      </div>
-                      <motion.button
-                        whileHover={{ scale: 1.1 }}
-                        whileTap={{ scale: 0.9 }}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          handleAddToCart(book)
-                        }}
-                        className="h-7 w-7 flex items-center justify-center !bg-primary !text-primary-foreground rounded"
-                      >
-                        <ShoppingCart className="h-3 w-3" />
-                      </motion.button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
-
-          {/* Сообщение если ничего не найдено */}
-          {sortedBooks.length === 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center py-12"
-            >
-              <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                <Search className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <p className="text-muted-foreground text-lg">Книги не найдены</p>
-              <p className="text-sm text-muted-foreground/70 mt-2">
-                Попробуйте изменить параметры поиска
-              </p>
-            </motion.div>
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
 
-      {/* Компонент детального просмотра */}
-      <BookDetail
-        book={selectedBook}
-        isOpen={!!selectedBook}
-        onClose={() => setSelectedBook(null)}
-        onAddToCart={handleAddToCart}
+      {/* Filters Modal */}
+      <Filters
+        isOpen={showFilters}
+        onClose={() => setShowFilters(false)}
+        onApplyFilters={handleApplyFilters}
+        initialFilters={activeFilters}
+        genres={genres}
+        churches={[]}
+        filterValues={filterValues}
       />
     </div>
   )
+}
+
+// Вспомогательная функция cn
+function cn(...classes: string[]) {
+  return classes.filter(Boolean).join(' ')
 }

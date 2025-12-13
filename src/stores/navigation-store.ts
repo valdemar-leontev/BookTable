@@ -1,6 +1,6 @@
 import { create } from 'zustand'
 
-type NavItem = 'home' | 'search' | 'catalog' | 'cart'
+type NavItem = 'home' | 'favorites' | 'catalog' | 'cart'
 
 interface NavigationState {
   activeTab: NavItem
