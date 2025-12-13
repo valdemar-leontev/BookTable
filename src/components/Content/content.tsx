@@ -6,8 +6,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Catalog from '@/pages/Catalog/catalog'
 import Favorites123 from '@/pages/Favorite123/favorite123'
 
-
-
 export const Content = () => {
   const location = useLocation()
 
