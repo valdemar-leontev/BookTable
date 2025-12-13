@@ -3,8 +3,8 @@ import { Routes, Route, useLocation } from 'react-router-dom'
 import { Cart } from '@/pages/Cart/cart'
 import { Home } from '@/pages/Home/home'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Catalog } from '../../pages/Catalog/catalog'
-import { Favorites } from '../../pages/Favorite/favorite'
+import Catalog from '@/pages/Catalog/catalog'
+// import { Favorites } from '../../pages/Favorite/favorite'
 
 
 
@@ -68,7 +68,7 @@ export const Content = () => {
               transition={pageTransition}
               className="h-full w-full"
             >
-              <Favorites />
+              {/* <Favorites /> */}
             </motion.div>
           } />
 

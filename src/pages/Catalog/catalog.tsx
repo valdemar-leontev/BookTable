@@ -20,7 +20,7 @@ interface FilterValues {
   maxYear: number
 }
 
-export const Catalog = () => {
+const Catalog = () => {
   // Состояние для книг и загрузки
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
@@ -536,3 +536,5 @@ export const Catalog = () => {
 function cn(...classes: string[]) {
   return classes.filter(Boolean).join(' ')
 }
+
+export default Catalog;
