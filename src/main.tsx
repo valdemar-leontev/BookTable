@@ -4,6 +4,7 @@ import "./index.css";
 import App from "./App";
 import { init } from '@tma.js/sdk-react'
 import { retrieveRawInitData } from '@tma.js/bridge';
+import { useUserStore, type User } from './stores/UserStore';
 
 try {
   init()
@@ -12,10 +13,11 @@ try {
 }
 
 const Root = () => {
+  const { setUser } = useUserStore();
 
   useEffect(() => {
     (async () => {
-      let telegramUser = null;
+      let telegramUser: User | null = null;
 
       try {
         const queryString = retrieveRawInitData();
@@ -25,9 +27,9 @@ const Root = () => {
           const decodedString = decodeURIComponent(queryString);
           const params = new URLSearchParams(decodedString);
           const userJson = params.get('user');
-
+          
           if (userJson) {
-            telegramUser = JSON.parse(decodeURIComponent(userJson));
+            telegramUser = JSON.parse(decodeURIComponent(userJson)) as User;
             console.log('Telegram user:', telegramUser);
           }
         }
@@ -35,7 +37,7 @@ const Root = () => {
         console.error('Error parsing Telegram data:', error);
       }
 
-      // // Используем тестовые данные если нет Telegram
+      // Используем тестовые данные если нет Telegram
       // const userData = await apiClient.post<IDataUser>('users', {
       //   userName: telegramUser?.username || 'test_username',
       //   firstName: telegramUser?.first_name || 'Test',
@@ -45,9 +47,9 @@ const Root = () => {
       //   photoUrl: telegramUser?.photo_url || '',
       // });
 
-      // setUser(userData.data);
+      setUser(telegramUser);
     })();
-  }, []);
+  }, [setUser]);
 
   return (
     <StrictMode>
