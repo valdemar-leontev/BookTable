@@ -4,7 +4,11 @@ import "./index.css";
 import App from "./App";
 import { init } from '@tma.js/sdk-react'
 import { retrieveRawInitData } from '@tma.js/bridge';
-import { useUserStore, transformTelegramUser, type TelegramUser } from './stores/UserStore';
+import { useUserStore, transformTelegramUser } from './stores/UserStore';
+import type { TelegramUser, User } from './types/User';
+import axios from 'axios';
+
+
 
 try {
   init()
@@ -37,24 +41,22 @@ const Root = () => {
         console.error('Error parsing Telegram data:', error);
       }
 
-      if (telegramUser) {
-        // Преобразуем Telegram пользователя в ваш формат
-        const user = transformTelegramUser(telegramUser);
-        setUser(user);
-        console.log('Transformed user:', user);
-      } else {
-        // Тестовый пользователь если нет Telegram
-        const testUser = {
-          id: 'test-123',
-          userName: 'test_username',
-          firstName: 'Test',
-          lastName: 'User',
-          telegramId: '123456789',
-          phone: '+79991234567',
-          photoUrl: '',
-        };
-        setUser(testUser);
+      let user: User | null = null;
+
+      if (!telegramUser) {
+        user = {
+          id: '1',
+          username: 'valdemar_leontev',
+          firstName: 'vladimir',
+          lastName: 'leontev',
+          telegramId: '12345678933',
+          phoneNumber: '+79991234567',
+        } as User;
       }
+
+      const { data } = await axios.post(`http://localhost:8080/api/user/get`, telegramUser ? transformTelegramUser(telegramUser) : user)
+
+      setUser(data);
     })();
   }, [setUser]);
 

@@ -20,6 +20,7 @@ import { Swiper, SwiperSlide } from 'swiper/react'
 import { Pagination, Navigation, Thumbs, FreeMode } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import type { Book } from '@/types/book'
+import { useUserStore } from '@/stores/UserStore'
 
 interface BookItemProps {
   book: Book
@@ -27,7 +28,6 @@ interface BookItemProps {
   onFavoriteToggle?: (bookId: number, isCurrentlyFavorite: boolean) => Promise<void>
   isInitiallyFavorite?: boolean
   showFavoriteButton?: boolean
-  userId?: number
 }
 
 export const BookItem = ({
@@ -36,7 +36,6 @@ export const BookItem = ({
   onFavoriteToggle,
   isInitiallyFavorite = false,
   showFavoriteButton = true,
-  userId = 1 // Заглушка, заменить на реальный ID из контекста
 }: BookItemProps) => {
   const [selectedBook, setSelectedBook] = useState<Book | null>(null)
   const [thumbsSwiper, setThumbsSwiper] = useState<SwiperType | null>(null)
@@ -44,6 +43,8 @@ export const BookItem = ({
   const [fullscreenImageIndex, setFullscreenImageIndex] = useState(0)
   const [isFavorite, setIsFavorite] = useState(isInitiallyFavorite)
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false)
+
+  const { user } = useUserStore();
 
   // Синхронизируем состояние избранного с пропсом
   useEffect(() => {
@@ -122,7 +123,7 @@ export const BookItem = ({
   const addToFavorites = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorites/users/${userId}/books/${book.id}`,
+        `http://localhost:8080/api/favorites/users/${user?.id}/books/${book.id}`,
         {
           method: 'POST',
           headers: {
@@ -147,7 +148,7 @@ export const BookItem = ({
   const removeFromFavorites = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorites/users/${userId}/books/${book.id}`,
+        `http://localhost:8080/api/favorites/users/${user?.id}/books/${book.id}`,
         {
           method: 'DELETE',
           headers: {

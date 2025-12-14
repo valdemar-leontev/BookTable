@@ -3,14 +3,14 @@ import { Loader2, Heart } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { BookItem } from '@/components/BookItem/BookItem'
 import type { Book } from '@/types/book'
+import { useUserStore } from '@/stores/UserStore'
 
 const Favorites123 = () => {
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  // ID пользователя (в реальном приложении брать из контекста/состояния авторизации)
-  const [userId] = useState<number>(1) // Заглушка, заменить на реальный ID
+  const { user } = useUserStore();
 
   // Загрузка избранных книг
   useEffect(() => {
@@ -18,7 +18,7 @@ const Favorites123 = () => {
       try {
         setLoading(true)
 
-        const response = await fetch(`http://localhost:8080/api/favorites/users/${userId}`)
+        const response = await fetch(`http://localhost:8080/api/favorites/users/${user?.id}`)
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -39,13 +39,13 @@ const Favorites123 = () => {
     }
 
     loadFavorites()
-  }, [userId])
+  }, [user])
 
   // Функция для удаления книги из избранного
   const handleRemoveFromFavorites = async (bookId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorites/users/${userId}/books/${bookId}`,
+        `http://localhost:8080/api/favorites/users/${user?.id}/books/${bookId}`,
         {
           method: 'DELETE',
           headers: {

@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { BookItem } from '@/components/BookItem/BookItem'
 import { Filters } from '@/components/Filters/Filters'
 import type { Book, Genre } from '@/types/book'
+import { useUserStore } from '@/stores/UserStore'
 
 interface BooksResponse {
   content: Book[]
@@ -46,8 +47,7 @@ const Catalog = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [searchInputValue, setSearchInputValue] = useState('')
 
-  // ID пользователя (временно используем 1)
-  const [userId] = useState<number>(1)
+  const { user } = useUserStore();
 
   // Состояние для избранных книг
   const [favoriteBooks, setFavoriteBooks] = useState<Set<number>>(new Set())
@@ -92,7 +92,7 @@ const Catalog = () => {
   // Функция загрузки избранных книг пользователя
   const loadUserFavorites = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/favorites/users/${userId}`)
+      const response = await fetch(`http://localhost:8080/api/favorites/users/${user?.id}`)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -108,7 +108,7 @@ const Catalog = () => {
       console.error('Ошибка загрузки избранных книг:', err)
       // Не показываем ошибку пользователю, так как это не критично
     }
-  }, [userId])
+  }, [user?.id])
 
   // Функция загрузки книг с фильтрами
   const fetchBooks = useCallback(async (pageNum: number, isLoadMore: boolean = false, filters: any = {}) => {
@@ -126,7 +126,7 @@ const Catalog = () => {
       }
 
       // Добавляем userId к запросу, чтобы бэкенд мог вернуть поле liked
-      const response = await fetch(`http://localhost:8080/books/filter?page=${pageNum}&size=5&userId=${userId}`, {
+      const response = await fetch(`http://localhost:8080/books/filter?page=${pageNum}&size=5&userId=${user?.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -161,7 +161,7 @@ const Catalog = () => {
       setLoading(false)
       setLoadingMore(false)
     }
-  }, [searchQuery, userId])
+  }, [searchQuery, user])
 
   // Загружаем избранные книги при первом рендере
   useEffect(() => {
@@ -224,7 +224,7 @@ const Catalog = () => {
       if (isCurrentlyFavorite) {
         // Удаляем из избранного
         const response = await fetch(
-          `http://localhost:8080/api/favorites/users/${userId}/books/${bookId}`,
+          `http://localhost:8080/api/favorites/users/${user?.id}/books/${bookId}`,
           {
             method: 'DELETE',
             headers: {
@@ -246,7 +246,7 @@ const Catalog = () => {
       } else {
         // Добавляем в избранное
         const response = await fetch(
-          `http://localhost:8080/api/favorites/users/${userId}/books/${bookId}`,
+          `http://localhost:8080/api/favorites/users/${user?.id}/books/${bookId}`,
           {
             method: 'POST',
             headers: {
@@ -477,7 +477,6 @@ const Catalog = () => {
                       book={book}
                       onFavoriteToggle={handleFavoriteToggle}
                       isInitiallyFavorite={favoriteBooks.has(book.id)}
-                      userId={userId}
                     />
                   </motion.div>
                 ))}

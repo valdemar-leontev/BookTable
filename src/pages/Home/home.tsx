@@ -13,17 +13,12 @@ const bibleVerses = [
   { verse: "Слово Твое - светильник ноге моей и свет стезе моей.", location: "Псалом 118:105" },
   { verse: "Надейся на Господа всем сердцем твоим, и не полагайся на разум твой.", location: "Притчи 3:5" },
   { verse: "Любовь долготерпит, милосердствует, любовь не завидует, любовь не превозносится, не гордится.", location: "1 Коринфянам 13:4" },
-  { verse: "Итак идите, научите все народы, крестя их во имя Отца и Сына и Святого Духа.", location: "Матфея 28:19" },
-  { verse: "Сие написал я вам, верующим во имя Сына Божия, дабы вы знали, что вы, веруя в Сына Божия, имеете жизнь вечную.", location: "1 Иоанна 5:13" },
-  { verse: "Не бойся, ибо Я с тобою; не смущайся, ибо Я Бог твой; Я укреплю тебя, и помогу тебе, и поддержу тебя десницею правды Моей.", location: "Исаия 41:10" }
 ]
 
 // Дополнительные цитаты о Библии
 const bibleQuotes = [
-  { quote: "Библия - это Бог, говорящий к человеку; это Слово Божие, переданное на языке людей.", author: "Августин Гиппонский" },
-  { quote: "Библия стоит всех других книг, которые были когда-либо напечатаны.", author: "Патрик Генри" },
-  { quote: "Чем больше ты читаешь Библию, и чем больше ты её постигаешь, тем больше ты будешь восхищаться ею.", author: "Георг Вильгельм Фридрих Гегель" },
-  { quote: "Библия - это письмо Бога к человечеству, доставленное специальным курьером - Святым Духом.", author: "А. У. Тозер" },
+  { quote: "Библия - это Бог, говорящий к человеку.", author: "Августин Гиппонский" },
+  { quote: "Библия стоит всех других книг.", author: "Патрик Генри" },
   { quote: "Величайший дар, который Бог дал человеку, - это Библия.", author: "Авраам Линкольн" }
 ]
 
@@ -53,60 +48,61 @@ export const Home = () => {
   }
 
   return (
-    <div className="h-full flex items-center justify-center p-4">
+    <div className="h-full flex items-center justify-center p-6">
       <motion.div
-        className="max-w-2xl mx-auto px-6 text-center flex flex-col h-full justify-between py-8"
+        className="max-w-md mx-auto text-center space-y-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Верхняя часть */}
-        <div className="space-y-8">
-          <div className="space-y-4">
-            <BookOpen className="h-12 w-12 text-primary mx-auto" />
-            <h1 className="text-3xl font-serif font-light text-foreground">
-              Добро пожаловать
-            </h1>
-
-            {/* Случайная цитата */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-center gap-3">
-                <div className="w-6 h-px bg-border" />
-                <p className="text-foreground/70 text-base font-light max-w-md leading-relaxed">
-                  {randomQuote ? `«${randomQuote.text}»` : '«Посещайте много хороших книг, но живите Библией»'}
-                </p>
-                <div className="w-6 h-px bg-border" />
-              </div>
-
-              <p className="text-foreground/50 text-sm">
-                {randomQuote ? randomQuote.author : 'Чарльз Сперджен'}
-              </p>
-            </div>
-          </div>
-
-          {/* Кнопка */}
+        {/* Иконка и заголовок */}
+        <div className="space-y-3">
+          <BookOpen className="h-14 w-14 text-primary mx-auto" />
           <div>
-            <Button
-              size="lg"
-              onClick={handleOpenCatalog}
-              className="text-base rounded-lg px-8 py-4"
-            >
-              <span className="flex items-center gap-2">
-                Открыть каталог
-                <ArrowRight className="h-4 w-4" />
-              </span>
-            </Button>
+            <h1 className="text-2xl font-serif font-semibold text-foreground">
+              Книжный стол
+            </h1>
+            <p className="text-sm text-muted-foreground mt-1">
+              Христианская библиотека
+            </p>
           </div>
         </div>
 
-        {/* Нижняя часть - теперь в самом низу */}
-        <div className="space-y-2 pt-8 mt-auto">
-          <p className="text-muted-foreground text-sm tracking-widest uppercase font-medium">
-            Христианская литература
-          </p>
-          <div className="w-16 h-px bg-border mx-auto" />
-          <p className="text-muted-foreground/70 text-xs">
-            Духовное наследие
+        {/* Цитата */}
+        <div className="space-y-4">
+          <div className="px-4 py-6 rounded-xl bg-card border shadow-sm">
+            <p className="text-base font-light leading-relaxed text-foreground">
+              {randomQuote ? `"${randomQuote.text}"` : '«Посещайте много хороших книг, но живите Библией»'}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-center gap-2">
+            <div className="h-px w-8 bg-border" />
+            <p className="text-sm text-muted-foreground">
+              {randomQuote ? randomQuote.author : 'Чарльз Сперджен'}
+            </p>
+            <div className="h-px w-8 bg-border" />
+          </div>
+        </div>
+
+        {/* Кнопка */}
+        <div>
+          <Button
+            size="lg"
+            onClick={handleOpenCatalog}
+            className="rounded-full px-8 py-6 text-base font-medium shadow-md hover:shadow-lg transition-shadow"
+          >
+            <span className="flex items-center gap-2">
+              Открыть каталог
+              <ArrowRight className="h-4 w-4" />
+            </span>
+          </Button>
+        </div>
+
+        {/* Подпись */}
+        <div className="pt-4">
+          <p className="text-xs text-muted-foreground/70">
+            Духовное наследие в ваших руках
           </p>
         </div>
       </motion.div>
