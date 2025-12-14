@@ -1,4 +1,4 @@
-import { Home, Heart, BookOpen } from 'lucide-react'
+import { Home, Heart, BookOpen, Info } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import { cn } from '@/lib/utils'
 import { useEffect, useRef, useState } from 'react'
@@ -15,7 +15,7 @@ export const NavBar = () => {
     { id: 'home' as NavItem, icon: Home, label: 'Главная', path: '/' },
     { id: 'catalog' as NavItem, icon: BookOpen, label: 'Каталог', path: '/catalog' },
     { id: 'favorite' as NavItem, icon: Heart, label: 'Избранное', path: '/favorites' },
-    // { id: 'cart' as NavItem, icon: ShoppingCart, label: 'Корзина', path: '/cart' },
+    { id: 'faq' as NavItem, icon: Info, label: 'Вопросы', path: '/faq' },
   ]
 
   const isActive = (path: string) => location.pathname === path || (path !== '/' && location.pathname.startsWith(path))

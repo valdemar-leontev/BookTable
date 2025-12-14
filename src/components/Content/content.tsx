@@ -5,6 +5,7 @@ import { Home } from '@/pages/Home/home'
 import { motion, AnimatePresence } from 'framer-motion'
 import Catalog from '@/pages/Catalog/catalog'
 import Favorites123 from '@/pages/Favorite123/favorite123'
+import { Faq } from '@/pages/Faq/faq'
 
 export const Content = () => {
   const location = useLocation()
@@ -93,6 +94,19 @@ export const Content = () => {
               className="h-full w-full"
             >
               <Cart />
+            </motion.div>
+          } />
+
+          <Route path="/faq" element={
+            <motion.div
+              initial="initial"
+              animate="in"
+              exit="out"
+              variants={pageVariants}
+              transition={pageTransition}
+              className="h-full w-full"
+            >
+              <Faq />
             </motion.div>
           } />
         </Routes>
