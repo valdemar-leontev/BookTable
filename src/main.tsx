@@ -8,8 +8,6 @@ import { useUserStore, transformTelegramUser } from './stores/UserStore';
 import type { TelegramUser, User } from './types/User';
 import axios from 'axios';
 
-
-
 try {
   init()
 } catch (error) {

@@ -5,7 +5,7 @@ import { BookItem } from '@/components/BookItem/BookItem'
 import type { Book } from '@/types/book'
 import { useUserStore } from '@/stores/UserStore'
 
-const Favorites123 = () => {
+const FavoritesBooks = () => {
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -173,4 +173,4 @@ const Favorites123 = () => {
 
 }
 
-export default Favorites123;
+export default FavoritesBooks;

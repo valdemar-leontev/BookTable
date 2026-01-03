@@ -4,7 +4,7 @@ import { Cart } from '@/pages/Cart/cart'
 import { Home } from '@/pages/Home/home'
 import { motion, AnimatePresence } from 'framer-motion'
 import Catalog from '@/pages/Catalog/catalog'
-import Favorites123 from '@/pages/Favorite123/favorite123'
+import FavoritesBooks from '@/pages/FavoritesBooks/favoritesBooks'
 import { Faq } from '@/pages/Faq/faq'
 
 export const Content = () => {
@@ -67,7 +67,7 @@ export const Content = () => {
               transition={pageTransition}
               className="h-full w-full"
             >
-              <Favorites123 />
+              <FavoritesBooks />
             </motion.div>
           } />
 
