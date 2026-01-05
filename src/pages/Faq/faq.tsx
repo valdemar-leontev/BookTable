@@ -5,9 +5,9 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Button } from '@/components/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import { Mail, ShoppingCart, BookOpen } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export const Faq = () => {
   const navigate = useNavigate()

@@ -1,6 +1,6 @@
+import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { ShoppingCart, Construction, ArrowRight } from 'lucide-react'
-import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
 
 export const Cart = () => {

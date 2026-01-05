@@ -5,6 +5,7 @@ import { BookItem } from '@/components/BookItem/BookItem'
 import type { Book } from '@/types/book'
 import { useUserStore } from '@/stores/UserStore'
 import { API_URL } from '@/constants'
+import { Button } from '@/components/ui/button'
 
 const FavoritesBooks = () => {
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([])

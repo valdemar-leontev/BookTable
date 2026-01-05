@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom'
-import { Button } from '@/components/ui/button'
 import { motion } from 'framer-motion'
 import { ArrowRight, BookOpen, Sparkles } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { Button } from './ui/button'
 
 // Стихи из Библии
 const bibleVerses = [
@@ -93,10 +93,10 @@ export const Home = () => {
             <Button
               size="lg"
               onClick={handleOpenCatalog}
-              className="!text-red-400 rounded-lg px-8 py-4 bg-amber-600 hover:bg-amber-700 shadow-md hover:shadow-lg transition-all duration-300"
+              className="rounded-lg px-8 py-4 bg-amber-600 hover:bg-amber-700 shadow-md hover:shadow-lg transition-all duration-300"
             >
               <span className="flex items-center gap-2">
-                Открыть каталогada
+                Открыть каталог
                 <ArrowRight className="h-4 w-4" />
               </span>
             </Button>
