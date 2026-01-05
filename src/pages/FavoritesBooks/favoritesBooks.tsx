@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { BookItem } from '@/components/BookItem/BookItem'
 import type { Book } from '@/types/book'
 import { useUserStore } from '@/stores/UserStore'
+import { API_URL } from '@/constants'
 
 const FavoritesBooks = () => {
   const [favoriteBooks, setFavoriteBooks] = useState<Book[]>([])
@@ -18,7 +19,7 @@ const FavoritesBooks = () => {
       try {
         setLoading(true)
 
-        const response = await fetch(`http://localhost:8080/api/favorites/users/${user?.id}`)
+        const response = await fetch(`${API_URL}/api/favorites/users/${user?.id}`)
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -45,7 +46,7 @@ const FavoritesBooks = () => {
   const handleRemoveFromFavorites = async (bookId: number) => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorites/users/${user?.id}/books/${bookId}`,
+        `${API_URL}/api/favorites/users/${user?.id}/books/${bookId}`,
         {
           method: 'DELETE',
           headers: {
@@ -92,12 +93,12 @@ const FavoritesBooks = () => {
         <div className="text-center">
           <p className="text-destructive text-lg mb-2">Ошибка</p>
           <p className="text-muted-foreground mb-4">{error}</p>
-          <button
+          <Button
             onClick={() => window.location.reload()}
             className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
             Обновить
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -138,12 +139,12 @@ const FavoritesBooks = () => {
                 <p className="text-sm text-muted-foreground mb-6">
                   Добавляйте книги в избранное, нажимая на сердечко на карточке книги
                 </p>
-                <button
+                <Button
                   onClick={() => window.history.back()}
                   className="px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm font-medium"
                 >
                   Вернуться в каталог
-                </button>
+                </Button>
               </div>
             </div>
           ) : (

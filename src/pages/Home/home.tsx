@@ -89,8 +89,9 @@ export const Home = () => {
         <div>
           <Button
             size="lg"
+            variant="outline"
             onClick={handleOpenCatalog}
-            className="rounded-full px-8 py-6 text-base font-medium shadow-md hover:shadow-lg transition-shadow"
+            className="rounded-full px-8 py-6 !text-primary font-medium shadow-md hover:shadow-lg transition-shadow !bg-background"
           >
             <span className="flex items-center gap-2">
               Открыть каталог

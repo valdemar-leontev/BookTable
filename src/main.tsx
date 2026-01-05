@@ -7,6 +7,7 @@ import { retrieveRawInitData } from '@tma.js/bridge';
 import { useUserStore, transformTelegramUser } from './stores/UserStore';
 import type { TelegramUser, User } from './types/User';
 import axios from 'axios';
+import { API_URL } from './constants';
 
 try {
   init()
@@ -44,15 +45,15 @@ const Root = () => {
       if (!telegramUser) {
         user = {
           id: '1',
-          username: 'valdemar_leontev',
-          firstName: 'vladimir',
-          lastName: 'leontev',
+          username: 'valdemar_leontev test',
+          firstName: 'vladimir test',
+          lastName: 'leontev test',
           telegramId: '12345678933',
           phoneNumber: '+79991234567',
         } as User;
       }
 
-      const { data } = await axios.post(`http://localhost:8080/api/user/get`, telegramUser ? transformTelegramUser(telegramUser) : user)
+      const { data } = await axios.post(`${API_URL}/api/user/get`, telegramUser ? transformTelegramUser(telegramUser) : user)
 
       setUser(data);
     })();

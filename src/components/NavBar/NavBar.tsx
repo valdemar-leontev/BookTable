@@ -68,15 +68,15 @@ export const NavBar = () => {
               ref={el => itemsRef.current[index] = el as any}
               onClick={() => handleItemClick(index)}
               className={cn(
-                "flex flex-col items-center p-3 rounded-xl transition-all duration-300 relative z-10 flex-1 mx-1",
+                "flex flex-col items-center p-3 rounded-xl transition-all duration-300 relative z-10 flex-1",
                 "hover:scale-105 active:scale-95",
                 active
                   ? "!text-accent"
                   : "text-gray-500 hover:text-gray-700"
               )}
             >
-              <Icon className="h-5 w-5 mb-1 transition-transform duration-300" />
-              <span className="text-xs font-medium transition-all duration-300">
+              <Icon className="h-4 w-4 mb-1 transition-transform duration-300" />
+              <span className="text-[12px] font-medium transition-all duration-300">
                 {item.label}
               </span>
             </Link>

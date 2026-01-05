@@ -93,10 +93,10 @@ export const Home = () => {
             <Button
               size="lg"
               onClick={handleOpenCatalog}
-              className="text-base rounded-lg px-8 py-4 bg-amber-600 hover:bg-amber-700 text-white shadow-md hover:shadow-lg transition-all duration-300"
+              className="!text-red-400 rounded-lg px-8 py-4 bg-amber-600 hover:bg-amber-700 shadow-md hover:shadow-lg transition-all duration-300"
             >
               <span className="flex items-center gap-2">
-                Открыть каталог
+                Открыть каталогada
                 <ArrowRight className="h-4 w-4" />
               </span>
             </Button>

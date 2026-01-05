@@ -21,6 +21,8 @@ import { Pagination, Navigation, Thumbs, FreeMode } from 'swiper/modules'
 import type { Swiper as SwiperType } from 'swiper'
 import type { Book } from '@/types/book'
 import { useUserStore } from '@/stores/UserStore'
+import { API_URL } from '@/constants'
+import { Button } from '../ui/button'
 
 interface BookItemProps {
   book: Book
@@ -123,7 +125,7 @@ export const BookItem = ({
   const addToFavorites = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorites/users/${user?.id}/books/${book.id}`,
+        `${API_URL}/api/favorites/users/${user?.id}/books/${book.id}`,
         {
           method: 'POST',
           headers: {
@@ -148,7 +150,7 @@ export const BookItem = ({
   const removeFromFavorites = async () => {
     try {
       const response = await fetch(
-        `http://localhost:8080/api/favorites/users/${user?.id}/books/${book.id}`,
+        `${API_URL}/api/favorites/users/${user?.id}/books/${book.id}`,
         {
           method: 'DELETE',
           headers: {
@@ -183,7 +185,7 @@ export const BookItem = ({
     >
       {/* Кнопка избранного */}
       {showFavoriteButton && (
-        <button
+        <Button
           onClick={handleFavoriteClick}
           disabled={isFavoriteLoading}
           className={cn(
@@ -201,7 +203,7 @@ export const BookItem = ({
               isFavorite && "fill-current"
             )}
           />
-        </button>
+        </Button>
       )}
 
       {/* Обложка книги */}
@@ -224,7 +226,7 @@ export const BookItem = ({
 
       {/* Информация о книге */}
       <div className="flex-1 flex flex-col">
-        <h3 className="font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+        <h3 className="min-h-10! max-h-10! font-semibold leading-tight line-clamp-2 mb-1 group-hover:text-primary transition-colors">
           {book.title}
         </h3>
 
@@ -277,16 +279,16 @@ export const BookItem = ({
             <div className="w-full h-full bg-background/95 backdrop-blur-2xl border border-border/50 flex flex-col">
               {/* Header */}
               <div className="flex items-center justify-between p-4 border-b border-border/30 bg-background/50 flex-shrink-0">
-                <button
+                <Button
                   onClick={closeDetails}
                   className="h-10 w-10 rounded-xl hover:bg-accent hover:text-accent-foreground transition-all duration-300 group flex items-center justify-center"
                 >
                   <ArrowLeft className="h-5 w-5 transition-transform group-hover:-translate-x-1 text-primary" />
-                </button>
+                </Button>
 
                 {/* Кнопка избранного в модалке */}
                 {showFavoriteButton && (
-                  <button
+                  <Button
                     onClick={handleFavoriteClick}
                     disabled={isFavoriteLoading}
                     className={cn(
@@ -306,7 +308,7 @@ export const BookItem = ({
                     <span className="text-sm font-medium">
                       {isFavorite ? 'В избранном' : 'В избранное'}
                     </span>
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -348,12 +350,12 @@ export const BookItem = ({
 
                       {/* Zoom Button */}
                       {book.photos && book.photos.length > 0 && (
-                        <button
+                        <Button
                           onClick={() => openFullscreen(0)}
                           className="absolute top-4 right-4 z-10 w-10 h-10 bg-background/80 backdrop-blur-sm rounded-full border border-border/50 text-foreground flex items-center justify-center hover:bg-background hover:scale-105 transition-all duration-200 shadow-lg"
                         >
                           <ZoomIn className="h-5 w-5" />
-                        </button>
+                        </Button>
                       )}
                     </div>
 
@@ -515,17 +517,17 @@ export const BookItem = ({
             className="fixed inset-0 z-[2001] flex items-center justify-center p-4"
           >
             {/* Close Button */}
-            <button
+            <Button
               onClick={closeFullscreen}
               className="absolute top-4 right-4 z-10 w-10 h-10 bg-background/20 backdrop-blur-sm rounded-full border border-border/50 text-foreground flex items-center justify-center hover:bg-background/40 hover:scale-105 transition-all duration-200"
             >
               <X className="h-5 w-5" />
-            </button>
+            </Button>
 
             {/* Navigation Buttons */}
             {book.photos.length > 1 && (
               <>
-                <button
+                <Button
                   onClick={(e) => {
                     e.stopPropagation()
                     setFullscreenImageIndex(prev =>
@@ -535,9 +537,9 @@ export const BookItem = ({
                   className="absolute left-4 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 bg-background/20 backdrop-blur-sm rounded-full border border-border/50 text-foreground flex items-center justify-center hover:bg-background/40 hover:scale-105 transition-all duration-200"
                 >
                   <ArrowLeft className="h-5 w-5" />
-                </button>
+                </Button>
 
-                <button
+                <Button
                   onClick={(e) => {
                     e.stopPropagation()
                     setFullscreenImageIndex(prev =>
@@ -547,7 +549,7 @@ export const BookItem = ({
                   className="absolute right-4 top-1/2 transform -translate-y-1/2 z-10 w-10 h-10 bg-background/20 backdrop-blur-sm rounded-full border border-border/50 text-foreground flex items-center justify-center hover:bg-background/40 hover:scale-105 transition-all duration-200"
                 >
                   <ArrowRight className="h-5 w-5" />
-                </button>
+                </Button>
               </>
             )}
 

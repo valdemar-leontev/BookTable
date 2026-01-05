@@ -30,7 +30,7 @@ export const Cart = () => {
           <div className="w-32 h-32 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20">
             <Construction className="h-16 w-16 text-primary" />
           </div>
-          
+
           {/* Декоративные элементы */}
           <motion.div
             className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center"
@@ -58,7 +58,7 @@ export const Cart = () => {
           >
             Корзина
           </motion.h1>
-          
+
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -69,7 +69,7 @@ export const Cart = () => {
               Раздел в разработке
             </p>
             <p className="text-sm text-muted-foreground/70 max-w-sm mx-auto leading-relaxed">
-              Мы активно работаем над созданием удобной корзины для ваших книг. 
+              Мы активно работаем над созданием удобной корзины для ваших книг.
               Скоро вы сможете легко добавлять товары и оформлять заказы.
             </p>
           </motion.div>
@@ -108,7 +108,7 @@ export const Cart = () => {
             Продолжить покупки
             <ArrowRight className="h-4 w-4" />
           </Button>
-          
+
           <Button
             variant="outline"
             onClick={() => window.location.reload()}

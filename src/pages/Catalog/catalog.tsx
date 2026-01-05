@@ -5,6 +5,8 @@ import { BookItem } from '@/components/BookItem/BookItem'
 import { Filters } from '@/components/Filters/Filters'
 import type { Book, Genre } from '@/types/book'
 import { useUserStore } from '@/stores/UserStore'
+import { API_URL } from '@/constants'
+import { Button } from '@/components/ui/button'
 
 interface BooksResponse {
   content: Book[]
@@ -62,14 +64,14 @@ const Catalog = () => {
         setLoading(true)
 
         // Загружаем жанры
-        const genresResponse = await fetch('http://localhost:8080/books/genres')
+        const genresResponse = await fetch(`${API_URL}/api/genres`)
         if (genresResponse.ok) {
           const genresData = await genresResponse.json()
           setGenres(genresData)
         }
 
         // Загружаем значения фильтров
-        const valuesResponse = await fetch('http://localhost:8080/books/filter-values')
+        const valuesResponse = await fetch(`${API_URL}/books/filter-values`)
         if (valuesResponse.ok) {
           const valuesData = await valuesResponse.json()
           setFilterValues(valuesData)
@@ -92,7 +94,7 @@ const Catalog = () => {
   // Функция загрузки избранных книг пользователя
   const loadUserFavorites = useCallback(async () => {
     try {
-      const response = await fetch(`http://localhost:8080/api/favorites/users/${user?.id}`)
+      const response = await fetch(`${API_URL}/api/favorites/users/${user?.id}`)
 
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`)
@@ -125,8 +127,7 @@ const Catalog = () => {
         finalFilters.search = searchQuery.trim()
       }
 
-      // Добавляем userId к запросу, чтобы бэкенд мог вернуть поле liked
-      const response = await fetch(`http://localhost:8080/books/filter?page=${pageNum}&size=5&userId=${user?.id}`, {
+      const response = await fetch(`${API_URL}/books/filter?page=${pageNum}&size=10&userId=${user?.id}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -141,7 +142,6 @@ const Catalog = () => {
       const data: BooksResponse = await response.json()
       console.log('Получены книги:', data)
 
-      // Обновляем книги
       if (isLoadMore) {
         setBooks(prev => [...prev, ...data.content])
       } else {
@@ -224,7 +224,7 @@ const Catalog = () => {
       if (isCurrentlyFavorite) {
         // Удаляем из избранного
         const response = await fetch(
-          `http://localhost:8080/api/favorites/users/${user?.id}/books/${bookId}`,
+          `${API_URL}/api/favorites/users/${user?.id}/books/${bookId}`,
           {
             method: 'DELETE',
             headers: {
@@ -246,7 +246,7 @@ const Catalog = () => {
       } else {
         // Добавляем в избранное
         const response = await fetch(
-          `http://localhost:8080/api/favorites/users/${user?.id}/books/${bookId}`,
+          `${API_URL}/api/favorites/users/${user?.id}/books/${bookId}`,
           {
             method: 'POST',
             headers: {
@@ -309,12 +309,12 @@ const Catalog = () => {
         <div className="text-center">
           <p className="text-destructive text-lg mb-2">Ошибка</p>
           <p className="text-muted-foreground">{error}</p>
-          <button
+          <Button
             onClick={() => window.location.reload()}
             className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90"
           >
             Обновить
-          </button>
+          </Button>
         </div>
       </div>
     )
@@ -352,45 +352,41 @@ const Catalog = () => {
                     value={searchInputValue}
                     onChange={(e) => handleSearchInputChange(e.target.value)}
                     onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                    className="w-full pl-10 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background text-sm"
+                    className="w-full pl-10 pr-10 py-2.5 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 bg-background text-sm text-primary"
                   />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                   {searchInputValue && (
                     <>
-                      <button
+                      <Button
                         onClick={handleClearSearch}
                         className="absolute right-10 top-1/2 transform -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
                       >
                         <X className="h-4 w-4" />
-                      </button>
-                      {/* Индикатор debounce */}
-                      <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-border overflow-hidden">
-                        <div className="h-full bg-primary animate-pulse"></div>
-                      </div>
+                      </Button>
                     </>
                   )}
-                  <button
+                  <Button
                     onClick={handleSearch}
                     className="absolute right-3 top-1/2 transform -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground"
                   >
                     <Search className="h-4 w-4" />
-                  </button>
+                  </Button>
                 </div>
               </motion.div>
 
               {/* Фильтры */}
-              <button
+              <Button
                 onClick={() => setShowFilters(true)}
                 className={cn(
                   "h-10 px-3.5 rounded-lg border flex items-center gap-2 transition-all",
                   Object.keys(activeFilters).length > 0
-                    ? "border-primary bg-primary text-primary-foreground hover:bg-primary/90"
-                    : "border-border bg-background hover:bg-muted"
+                    ? "!border-primary !bg-primary !text-primary-foreground !hover:bg-primary/90"
+                    : "!border-border !bg-background !hover:bg-muted"
                 )}
               >
                 <Filter className="h-4 w-4" />
                 <span className="text-sm font-medium hidden sm:inline">Фильтры</span>
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -428,7 +424,7 @@ const Catalog = () => {
                   </span>
                 )}
               </div>
-              <button
+              <Button
                 onClick={() => {
                   handleApplyFilters({})
                   handleClearSearch()
@@ -436,7 +432,7 @@ const Catalog = () => {
                 className="text-xs text-muted-foreground hover:text-foreground px-2 py-1 hover:bg-muted rounded transition-colors whitespace-nowrap"
               >
                 Очистить все
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -455,12 +451,12 @@ const Catalog = () => {
                 <p className="text-sm text-muted-foreground mb-6">
                   Попробуйте изменить параметры поиска или фильтры
                 </p>
-                <button
+                <Button
                   onClick={() => setShowFilters(true)}
                   className="px-4 py-2.5 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm font-medium"
                 >
                   Открыть фильтры
-                </button>
+                </Button>
               </div>
             </div>
           ) : (
@@ -485,10 +481,10 @@ const Catalog = () => {
               {/* Load More Button */}
               {hasMore && (
                 <div className="flex justify-center mt-8">
-                  <button
+                  <Button
                     onClick={handleLoadMore}
                     disabled={loadingMore}
-                    className="px-6 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
+                    className="px-6 py-3 rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-sm font-medium"
                   >
                     {loadingMore ? (
                       <>
@@ -498,7 +494,7 @@ const Catalog = () => {
                     ) : (
                       'Загрузить еще'
                     )}
-                  </button>
+                  </Button>
                 </div>
               )}
 

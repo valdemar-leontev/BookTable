@@ -7,16 +7,17 @@ import {
   ChevronUp,
   ChevronDown,
   Calendar,
-  DollarSign,
   Tag,
   Check,
   SortAsc,
   SortDesc,
-  ChevronRight
+  ChevronRight,
+  BadgeRussianRuble
 } from 'lucide-react'
 import { Slider } from '@/components/ui/slider'
 import { cn } from '@/lib/utils'
 import { motion, AnimatePresence } from 'framer-motion'
+import { Button } from '../ui/button'
 
 interface FiltersProps {
   isOpen: boolean
@@ -144,12 +145,12 @@ export const Filters = ({
                 <Filter className="h-5 w-5" />
                 <h2 className="text-lg font-semibold">Фильтры</h2>
               </div>
-              <button
+              <Button
                 onClick={onClose}
                 className="p-2 hover:bg-muted rounded-lg"
               >
                 <X className="h-5 w-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Content */}
@@ -166,19 +167,19 @@ export const Filters = ({
                     className="w-full pl-10 pr-10 py-2 border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50"
                   />
                   {searchQuery && (
-                    <button
+                    <Button
                       onClick={handleClearSearch}
                       className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground hover:text-foreground"
                     >
                       <X className="h-4 w-4" />
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
 
               {/* Genres */}
               <div className="mb-6">
-                <button
+                <Button
                   onClick={() => toggleSection('genres')}
                   className="flex items-center justify-between w-full p-3 bg-muted/50 rounded-lg mb-2"
                 >
@@ -196,7 +197,7 @@ export const Filters = ({
                   ) : (
                     <ChevronDown className="h-4 w-4" />
                   )}
-                </button>
+                </Button>
 
                 <AnimatePresence>
                   {expandedSections.genres && (
@@ -209,7 +210,7 @@ export const Filters = ({
                       <div className="space-y-2">
                         <div className="grid grid-cols-2 gap-2 p-2">
                           {visibleGenres.map((genre) => (
-                            <button
+                            <Button
                               key={genre.id}
                               onClick={() => toggleGenre(genre.id)}
                               className={cn(
@@ -223,13 +224,13 @@ export const Filters = ({
                                 <Check className="h-3 w-3 shrink-0" />
                               )}
                               <span className="truncate">{genre.name}</span>
-                            </button>
+                            </Button>
                           ))}
                         </div>
 
                         {/* Кнопка "Показать еще" */}
                         {hasMoreGenres && (
-                          <button
+                          <Button
                             onClick={() => setShowAllGenres(!showAllGenres)}
                             className="w-full flex items-center justify-center gap-1 p-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                           >
@@ -238,7 +239,7 @@ export const Filters = ({
                               "h-4 w-4 transition-transform",
                               showAllGenres ? "rotate-90" : ""
                             )} />
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </motion.div>
@@ -248,12 +249,12 @@ export const Filters = ({
 
               {/* Price Range */}
               <div className="mb-6">
-                <button
+                <Button
                   onClick={() => toggleSection('price')}
                   className="flex items-center justify-between w-full p-3 bg-muted/50 rounded-lg mb-2"
                 >
                   <div className="flex items-center gap-2">
-                    <DollarSign className="h-4 w-4" />
+                    <BadgeRussianRuble className="h-4 w-4" />
                     <span className="font-medium">Цена</span>
                     {(priceRange[0] > filterValues.minPrice || priceRange[1] < filterValues.maxPrice) && (
                       <span className="text-xs text-primary">
@@ -266,7 +267,7 @@ export const Filters = ({
                   ) : (
                     <ChevronDown className="h-4 w-4" />
                   )}
-                </button>
+                </Button>
 
                 <AnimatePresence>
                   {expandedSections.price && (
@@ -296,7 +297,7 @@ export const Filters = ({
 
               {/* Year Range */}
               <div className="mb-6">
-                <button
+                <Button
                   onClick={() => toggleSection('year')}
                   className="flex items-center justify-between w-full p-3 bg-muted/50 rounded-lg mb-2"
                 >
@@ -314,7 +315,7 @@ export const Filters = ({
                   ) : (
                     <ChevronDown className="h-4 w-4" />
                   )}
-                </button>
+                </Button>
 
                 <AnimatePresence>
                   {expandedSections.year && (
@@ -344,7 +345,7 @@ export const Filters = ({
 
               {/* In Stock Only */}
               <div className="mb-6">
-                <button
+                <Button
                   onClick={() => setInStockOnly(!inStockOnly)}
                   className="flex items-center justify-between w-full p-3 bg-muted/50 rounded-lg"
                 >
@@ -358,12 +359,12 @@ export const Filters = ({
                       inStockOnly ? "translate-x-5" : "translate-x-1"
                     )} />
                   </div>
-                </button>
+                </Button>
               </div>
 
               {/* Sort */}
               <div className="mb-6">
-                <button
+                <Button
                   onClick={() => toggleSection('sort')}
                   className="flex items-center justify-between w-full p-3 bg-muted/50 rounded-lg mb-2"
                 >
@@ -385,7 +386,7 @@ export const Filters = ({
                   ) : (
                     <ChevronDown className="h-4 w-4" />
                   )}
-                </button>
+                </Button>
 
                 <AnimatePresence>
                   {expandedSections.sort && (
@@ -396,62 +397,62 @@ export const Filters = ({
                       className="overflow-hidden"
                     >
                       <div className="space-y-2 p-2">
-                        <button
+                        <Button
                           onClick={() => setSortBy('title')}
                           className={cn(
                             "w-full text-left p-2 rounded-lg transition-all",
                             sortBy === 'title'
-                              ? "bg-primary text-primary-foreground"
+                              ? "!bg-primary !text-primary-foreground"
                               : "hover:bg-muted"
                           )}
                         >
                           По названию
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => setSortBy('price')}
                           className={cn(
                             "w-full text-left p-2 rounded-lg transition-all",
                             sortBy === 'price'
-                              ? "bg-primary text-primary-foreground"
+                              ? "!bg-primary !text-primary-foreground"
                               : "hover:bg-muted"
                           )}
                         >
                           По цене
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           onClick={() => setSortBy('publishYear')}
                           className={cn(
                             "w-full text-left p-2 rounded-lg transition-all",
                             sortBy === 'publishYear'
-                              ? "bg-primary text-primary-foreground"
+                              ? "!bg-primary !text-primary-foreground"
                               : "hover:bg-muted"
                           )}
                         >
                           По году издания
-                        </button>
+                        </Button>
                         <div className="flex gap-2 mt-2">
-                          <button
+                          <Button
                             onClick={() => setSortDirection('ASC')}
                             className={cn(
                               "flex-1 p-2 rounded-lg border text-center",
                               sortDirection === 'ASC'
-                                ? "bg-primary text-primary-foreground border-primary"
+                                ? "!bg-primary !text-primary-foreground !border-primary"
                                 : "border-border hover:bg-muted"
                             )}
                           >
                             По возрастанию
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             onClick={() => setSortDirection('DESC')}
                             className={cn(
                               "flex-1 p-2 rounded-lg border text-center",
                               sortDirection === 'DESC'
-                                ? "bg-primary text-primary-foreground border-primary"
+                                ? "!bg-primary !text-primary-foreground !border-primary"
                                 : "border-border hover:bg-muted"
                             )}
                           >
                             По убыванию
-                          </button>
+                          </Button>
                         </div>
                       </div>
                     </motion.div>
@@ -462,18 +463,18 @@ export const Filters = ({
 
             {/* Footer */}
             <div className="p-4 border-t border-border flex gap-3">
-              <button
+              <Button
                 onClick={handleResetFilters}
                 className="flex-1 py-3 border border-border rounded-lg hover:bg-muted transition-colors"
               >
                 Сбросить
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleApplyFilters}
-                className="flex-1 py-3 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+                className="flex-1 py-3 !bg-primary !text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
               >
                 Применить
-              </button>
+              </Button>
             </div>
           </motion.div>
         </>

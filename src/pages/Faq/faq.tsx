@@ -5,7 +5,7 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/Button'
 import { useNavigate } from 'react-router-dom'
 import { Mail, ShoppingCart, BookOpen } from 'lucide-react'
 
@@ -87,7 +87,7 @@ export const Faq = () => {
           >
             Перейти в каталог
           </Button>
-          
+
           <Button
             variant="outline"
             onClick={() => window.open('https://t.me/booktable_support', '_blank')}
